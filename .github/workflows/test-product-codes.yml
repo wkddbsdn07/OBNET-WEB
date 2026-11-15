@@ -8,6 +8,8 @@ on:
       - "scripts/add_product.py"
       - "scripts/manage_products.py"
       - "scripts/catalog_http.py"
+      - "scripts/health_check.py"
+      - "tests/test_health_check.py"
       - "scripts/synthesize_short.py"
       - "scripts/render_short.py"
       - "tests/test_catalog_http.py"
