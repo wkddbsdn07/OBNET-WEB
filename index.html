@@ -52,6 +52,13 @@ body{background:radial-gradient(ellipse at 83% 0%,#17202b 0%,#090c13 32%,#06080f
 .purchase-link:hover{background:#fff}
 .purchase-link[hidden],.disabled[hidden]{display:none}
 
+
+.transparency{display:flex;align-items:center;justify-content:space-between;gap:30px}
+.transparency p{color:var(--muted);max-width:560px;line-height:1.75;font-size:14px;margin:16px 0 0}
+.transparency-link{display:inline-flex;align-items:center;justify-content:center;border:1px solid #748496;border-radius:11px;color:#edf3fa;font-weight:700;font-size:13px;padding:14px 16px;white-space:nowrap;transition:background .2s}
+.transparency-link:hover{background:#263344}
+.footer a{color:#d9e7f6;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:740px){.transparency{display:block}.transparency-link{margin-top:20px}}
 </style>
 </head>
 <body>
@@ -60,8 +67,9 @@ body{background:radial-gradient(ellipse at 83% 0%,#17202b 0%,#090c13 32%,#06080f
 <section class="hero page"><div class="intro-tag">CURATED TECH & DESIGN</div><h1>Discover<br><em>what's next.</em></h1><p class="description">Interesting technology. Smarter desks. Objects worth discovering. Find the products featured in our videos by their unique product code.</p><form class="search-wrap" id="searchForm" role="search"><svg width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16 16 5 5"/></svg><input id="codeInput" aria-label="Product code" autocomplete="off" inputmode="numeric" placeholder="Enter product code (e.g. 1001)" required><button type="submit">EXPLORE ↗</button></form><p class="hint">TRY A DEMO CODE: 1001 · 1002 · 1003</p><div class="result" id="result" role="status" aria-live="polite"></div></section>
 <section class="section" id="collection"><div class="page"><div class="section-top"><div><div class="eyebrow">001 / DISCOVER</div><h2>The collection<span style="color:var(--accent)">.</span></h2></div><p>Preview products · More coming soon</p></div><div class="cards" id="cards"></div></div></section>
 <section class="section" id="how"><div class="page how"><div><div class="eyebrow">002 / THE IDEA</div><h2>See it. Search it.<br>Explore it.</h2></div><ol><li><b>01</b><div><strong>Watch a Short</strong><small>Spot a curious product in an OBNOTE video.</small></div></li><li><b>02</b><div><strong>Enter the code</strong><small>Find the unique code mentioned in the video.</small></div></li><li><b>03</b><div><strong>Explore the details</strong><small>Learn about the object, all in one place.</small></div></li></ol></div></section>
+<section class="section" id="transparency"><div class="page transparency"><div><div class="eyebrow">003 / TRANSPARENCY</div><h2>Clear by design.</h2><p>These are fictional preview products. This demo site currently has no ads, affiliate links, or checkout.</p></div><a class="transparency-link" href="./privacy.html">Privacy &amp; Disclosure ↗</a></div></section>
 </main>
-<footer class="page footer"><strong>OBNOTE®</strong><span>DISCOVER WHAT'S NEXT.</span><span>Demo site · No purchases, ads or affiliate links.</span></footer>
+<footer class="page footer"><strong>OBNOTE®</strong><span>DISCOVER WHAT'S NEXT.</span><span>Demo site · No purchases, ads or affiliate links. <a href="./privacy.html">Privacy &amp; Disclosure</a></span></footer>
 <div class="dialog-backdrop" id="backdrop"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" tabindex="-1"><button class="dialog-close" id="closeDialog" aria-label="Close details">×</button><div class="dialog-art" id="dialogImage"></div><div class="code" id="dialogCode"></div><h2 id="dialogTitle"></h2><p id="dialogText"></p><p class="product-price" id="dialogPrice"></p><ul id="dialogFeatures"></ul><p class="notice" id="dialogNotice">Preview products only.</p><a id="purchaseLink" class="purchase-link" target="_blank" rel="sponsored nofollow noopener noreferrer" hidden>View at seller ↗</a><button class="disabled" id="unavailable" disabled>Purchase link not available yet ↗</button></section></div>
 <script>
 const demoProducts=[
