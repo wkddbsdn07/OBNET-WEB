@@ -35,3 +35,14 @@ The existing Connected Supabase plugin allows database administration through au
 The management RPC in `public` uses `SECURITY INVOKER`, not `SECURITY DEFINER`; EXECUTE has been revoked from PUBLIC/anon/authenticated and granted only to service_role. The internal sequence is in a non-exposed schema.
 
 For production use, periodically check the Supabase Security Advisor and keep the commercial hosting and affiliate restrictions in mind.
+
+## Duplicate protection
+
+Applied migration: `prevent-duplicate-products.sql`. Two unique indexes prevent duplicate product names or seller links on both INSERT and UPDATE, even with simultaneous requests.
+
+- Product names are matched case-insensitively, ignoring repeated and surrounding whitespace.
+- Seller URLs are matched case-insensitively, ignoring `#` fragments and trailing slashes. Query parameters remain significant.
+- Missing seller links do not count as duplicates.
+- This is not fuzzy duplicate detection; similar names and different tracked URLs may still refer to the same product.
+
+Verified using SQL insert/update collision assertions inside a rolled-back transaction. Existing products were not changed.
