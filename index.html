@@ -59,6 +59,10 @@ body{background:radial-gradient(ellipse at 83% 0%,#17202b 0%,#090c13 32%,#06080f
 .transparency-link:hover{background:#263344}
 .footer a{color:#d9e7f6;text-decoration:underline;text-underline-offset:4px}
 @media(max-width:740px){.transparency{display:block}.transparency-link{margin-top:20px}}
+
+.stock-label{margin-top:9px;color:#b7cbd9;font-size:12px;letter-spacing:.015em}
+.dialog p.stock-label{font-weight:650;color:#d5e3f1;font-size:14px;margin:0 0 3px}
+.dialog p.data-timestamp{color:#9eaebd;font-size:12px;margin:0 0 15px}
 </style>
 </head>
 <body>
@@ -70,7 +74,7 @@ body{background:radial-gradient(ellipse at 83% 0%,#17202b 0%,#090c13 32%,#06080f
 <section class="section" id="transparency"><div class="page transparency"><div><div class="eyebrow">003 / TRANSPARENCY</div><h2>Clear by design.</h2><p>These are fictional preview products. This demo site currently has no ads, affiliate links, or checkout.</p></div><a class="transparency-link" href="./privacy.html">Privacy &amp; Disclosure ↗</a></div></section>
 </main>
 <footer class="page footer"><strong>OBNOTE®</strong><span>DISCOVER WHAT'S NEXT.</span><span>Demo site · No purchases, ads or affiliate links. <a href="./privacy.html">Privacy &amp; Disclosure</a></span></footer>
-<div class="dialog-backdrop" id="backdrop"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" tabindex="-1"><button class="dialog-close" id="closeDialog" aria-label="Close details">×</button><div class="dialog-art" id="dialogImage"></div><div class="code" id="dialogCode"></div><h2 id="dialogTitle"></h2><p id="dialogText"></p><p class="product-price" id="dialogPrice"></p><ul id="dialogFeatures"></ul><p class="notice" id="dialogNotice">Preview products only.</p><a id="purchaseLink" class="purchase-link" target="_blank" rel="sponsored nofollow noopener noreferrer" hidden>View at seller ↗</a><button class="disabled" id="unavailable" disabled>Purchase link not available yet ↗</button></section></div>
+<div class="dialog-backdrop" id="backdrop"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" tabindex="-1"><button class="dialog-close" id="closeDialog" aria-label="Close details">×</button><div class="dialog-art" id="dialogImage"></div><div class="code" id="dialogCode"></div><h2 id="dialogTitle"></h2><p id="dialogText"></p><p class="product-price" id="dialogPrice"></p><p class="stock-label" id="dialogStock"></p><p class="data-timestamp" id="dialogPriceChecked"></p><ul id="dialogFeatures"></ul><p class="notice" id="dialogNotice">Preview products only.</p><a id="purchaseLink" class="purchase-link" target="_blank" rel="sponsored nofollow noopener noreferrer" hidden>View at seller ↗</a><button class="disabled" id="unavailable" disabled>Purchase link not available yet ↗</button></section></div>
 <script>
 const demoProducts=[
  {code:"1001",name:"Orbit Dock",category:"DESK TECH",tagline:"A cleaner desk, by design.",description:"A concept desktop dock demonstrating how a product page could introduce elegant cable organization and workspace essentials.",features:["Concept product for interface testing","Geometric desktop accessory visualization","No actual listing or price"],art:`<svg viewBox="0 0 240 180" aria-hidden="true"><ellipse cx="120" cy="132" rx="83" ry="23" fill="#07090b" opacity=".6"/><rect x="46" y="85" width="148" height="49" rx="17" fill="#6d757c"/><rect x="46" y="79" width="148" height="43" rx="17" fill="#b4bac0"/><rect x="57" y="84" width="126" height="24" rx="10" fill="#222832"/><circle cx="81" cy="96" r="6" fill="#dfe7f0"/><rect x="106" y="91" width="54" height="10" rx="5" fill="#47505a"/><path d="M175 98h27c10 0 14-6 14-16" stroke="#7f8a95" stroke-width="7" fill="none" stroke-linecap="round"/></svg>`},
@@ -105,13 +109,26 @@ function cleanProduct(p){
     currency,price:Number.isFinite(price)&&price>0?price:null,
     image_url:secureUrl(p.image_url),
     purchase_url:secureUrl(p.purchase_url),
-    is_demo:!!p.is_demo
+    is_demo:!!p.is_demo,
+    stock_status:["unknown","in_stock","out_of_stock","preorder"].includes(p.stock_status)?p.stock_status:"unknown",
+    price_checked_at:typeof p.price_checked_at==="string"?p.price_checked_at:null,
+    stock_checked_at:typeof p.stock_checked_at==="string"?p.stock_checked_at:null
   };
 }
 function money(p){
   if(p.price===null) return "Price not listed";
   try{return new Intl.NumberFormat("en-US",{style:"currency",currency:p.currency}).format(p.price)}
   catch{return p.price+" "+p.currency}
+}
+function availability(p){
+  if(p.is_demo)return "Concept / demo only";
+  return ({in_stock:"Reported in stock",out_of_stock:"Reported out of stock",preorder:"Reported as pre-order",unknown:"Stock not verified"})[p.stock_status] || "Stock not verified";
+}
+function observedDate(value){
+  if(!value)return null;
+  const d=new Date(value);
+  if(!Number.isFinite(d.valueOf()))return null;
+  return d.toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"});
 }
 function media(p){
   const box=document.createElement("div");box.className="art";
@@ -145,6 +162,7 @@ function buildCard(p){
   addText(body,"h3",p.name);
   addText(body,"p",p.tagline);
   addText(body,"div",money(p),"product-price");
+  addText(body,"div",availability(p),"stock-label");
   const footer=document.createElement("div");footer.className="card-footer";
   addText(footer,"span","CODE "+p.code);
   addText(footer,"span","↗");
@@ -163,6 +181,8 @@ function openProduct(code){
   $("#dialogTitle").textContent=p.name;
   $("#dialogText").textContent=p.description;
   $("#dialogPrice").textContent=money(p);
+  $("#dialogStock").textContent=availability(p)+(observedDate(p.stock_checked_at)?" · Recorded "+observedDate(p.stock_checked_at):"");
+  $("#dialogPriceChecked").textContent=p.price!==null?(observedDate(p.price_checked_at)?"Price recorded "+observedDate(p.price_checked_at):"Price not independently verified"):"";
   $("#dialogFeatures").replaceChildren(...p.features.map(item=>{
     const li=document.createElement("li");li.textContent=item;return li;
   }));
@@ -170,7 +190,8 @@ function openProduct(code){
     ?"Concept demonstration only. No real product, pricing or purchase link."
     :"Product information is for reference. Check the seller for current details and availability. Some links may earn OBNOTE a commission.";
   const link=$("#purchaseLink"),unavailable=$("#unavailable");
-  const canBuy=!p.is_demo&&!!p.purchase_url;
+  const canBuy=!p.is_demo&&!!p.purchase_url&&p.stock_status!=="out_of_stock";
+  unavailable.textContent=p.stock_status==="out_of_stock"?"Reported out of stock — check seller":"Purchase link not available yet ↗";
   link.hidden=!canBuy;unavailable.hidden=canBuy;
   if(canBuy){link.href=p.purchase_url}
   else{link.removeAttribute("href")}
@@ -194,7 +215,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#backdrop").clas
 const DB_URL="https://bidcctugofnvfilywick.supabase.co";
 const DB_PUBLIC_KEY="sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ";
 async function catalogFromSupabase(){
-  const fields="code,name,category,tagline,description,features,image_url,price,currency,purchase_url,is_demo";
+  const fields="code,name,category,tagline,description,features,image_url,price,currency,purchase_url,is_demo,stock_status,price_checked_at,stock_checked_at";
   const endpoint=DB_URL+"/rest/v1/products?select="+encodeURIComponent(fields)+"&published=eq.true&order=code.asc";
   const response=await fetch(endpoint,{headers:{"apikey":DB_PUBLIC_KEY,"Accept":"application/json"},cache:"no-store"});
   if(!response.ok)throw new Error("Supabase HTTP "+response.status);
