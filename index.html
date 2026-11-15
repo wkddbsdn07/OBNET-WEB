@@ -190,25 +190,44 @@ $("#searchForm").addEventListener("submit",e=>{
 $("#closeDialog").addEventListener("click",closeProduct);
 $("#backdrop").addEventListener("click",e=>{if(e.target===$("#backdrop"))closeProduct()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#backdrop").classList.contains("open"))closeProduct()});
+// Publishable (public) key only. Supabase RLS restricts public users to SELECT published rows.
+const DB_URL="https://bidcctugofnvfilywick.supabase.co";
+const DB_PUBLIC_KEY="sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ";
+async function catalogFromJson(){
+  const response=await fetch("./products.json",{cache:"no-store"});
+  if(!response.ok)throw new Error("GitHub catalog HTTP "+response.status);
+  const data=await response.json();
+  if(!Array.isArray(data))throw new Error("GitHub catalog must be an array");
+  return data;
+}
+async function catalogFromSupabase(){
+  const fields="code,name,category,tagline,description,features,image_url,price,currency,purchase_url,is_demo";
+  const endpoint=DB_URL+"/rest/v1/products?select="+encodeURIComponent(fields)+"&published=eq.true&order=code.asc";
+  const response=await fetch(endpoint,{headers:{"apikey":DB_PUBLIC_KEY,"Accept":"application/json"},cache:"no-store"});
+  if(!response.ok)throw new Error("Supabase HTTP "+response.status);
+  const data=await response.json();
+  if(!Array.isArray(data))throw new Error("Supabase response must be an array");
+  return data;
+}
 async function loadProducts(){
-  try{
-    const response=await fetch("./products.json",{cache:"no-store"});
-    if(!response.ok)throw new Error("Catalog response "+response.status);
-    const raw=await response.json();
-    if(!Array.isArray(raw))throw new Error("Catalog must be an array");
-    const seen=new Set();
-    const data=raw.map(cleanProduct).filter(p=>{
-      if(!p||seen.has(p.code))return false;seen.add(p.code);return true;
-    });
-    if(!data.length)throw new Error("Catalog is empty");
-    products=data;
-    renderProducts();
-    const code=new URL(location.href).searchParams.get("code");
-    if(code)openProduct(code.toUpperCase());
-  }catch(err){
-    console.warn("Using fallback demo catalog",err);
-    $("#result").textContent="Showing demo products. Live catalog is temporarily unavailable.";
+  // Transitional approach: GitHub remains the registration source of truth.
+  // Include published Supabase-only entries but prefer newer GitHub entries for matching codes.
+  const [db,file]=await Promise.allSettled([catalogFromSupabase(),catalogFromJson()]);
+  const combined=new Map();
+  if(db.status==="fulfilled"){
+    for(const raw of db.value){const p=cleanProduct(raw);if(p)combined.set(p.code,p)}
+  }else{console.warn("Supabase catalog unavailable; using GitHub catalog",db.reason)}
+  if(file.status==="fulfilled"){
+    for(const raw of file.value){const p=cleanProduct(raw);if(p)combined.set(p.code,p)}
+  }else{console.warn("GitHub catalog unavailable; using Supabase catalog",file.reason)}
+  if(!combined.size){
+    $("#result").textContent="Live catalog is temporarily unavailable. Showing built-in demo items.";
+    return;
   }
+  products=Array.from(combined.values()).sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}));
+  renderProducts();
+  const code=new URL(location.href).searchParams.get("code");
+  if(code)openProduct(code.toUpperCase());
 }
 renderProducts();
 const initial=new URL(location.href).searchParams.get("code");
