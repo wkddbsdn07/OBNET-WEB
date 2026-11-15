@@ -221,9 +221,7 @@ async function loadProducts(){
     $("#result").textContent="Live catalog temporarily unavailable. Please try again.";
   }
 }
-renderProducts();
-const initial=new URL(location.href).searchParams.get("code");
-if(initial)openProduct(initial.toUpperCase());
+// Avoid showing built-in demo cards before Supabase confirms published products.
 loadProducts();
 
 </script>
