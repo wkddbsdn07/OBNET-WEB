@@ -125,7 +125,22 @@ def centered_lines(draw, lines, size, top, color=INK, gap=22):
         y += size + gap
 
 
-def draw_scene(product, i):
+def render_caption(draw, label):
+    """Draw source-backed captions directly, avoiding external subtitle codecs."""
+    if not label:
+        return
+    label = re.sub(r"\\s+", " ", str(label)).strip()[:200]
+    # Captions stay inside the Shorts center safe zone, above footer metadata.
+    lines = fit_lines(draw, label, 38, 840, 2)
+    if not lines:
+        return
+    top = 1450 - (len(lines) - 1) * 25
+    draw.rounded_rectangle((65, top - 23, 1015, top + 55 * len(lines) + 28),
+                           radius=20, fill=(13, 19, 29))
+    centered_lines(draw, lines, 38, top, INK, 13)
+
+
+def draw_scene(product, i, caption=None):
     image = background()
     draw = ImageDraw.Draw(image)
     layout(draw, product, i)
@@ -158,17 +173,19 @@ def draw_scene(product, i):
         centered_lines(draw, ["FIND IT BY CODE"], 63, 615, SILVER)
         centered_lines(draw, [str(product["code"])], 180, 815, INK)
         centered_lines(draw, ["SEARCH ON OBNOTE"], 52, 1150, SILVER)
+    render_caption(draw, caption)
     return image
 
 
-def render(product, output):
+def render(product, output, plan=None):
     code = str(product["code"])
     folder = output.parent / ("frames-" + code)
     folder.mkdir(parents=True, exist_ok=True)
     frames = []
     for i in range(5):
         path = folder / f"scene-{i + 1}.png"
-        draw_scene(product, i).save(path)
+        caption = plan["segments"][i]["caption"] if plan else None
+        draw_scene(product, i, caption).save(path)
         frames.append(path)
     sequence = folder / "frames.txt"
     durations = [2.4, 2.2, 2.8, 2.0, 3.0]
@@ -191,11 +208,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--code", default="1001")
     parser.add_argument("--out", default="")
+    parser.add_argument("--storyboard", default="", help="Narration storyboard JSON for captions")
     args = parser.parse_args()
     key = os.environ.get("OBNOTE_SUPABASE_PUBLIC_KEY", "")
     product = get_product(args.code, key)
     output = Path(args.out or ("dist/obnote-" + args.code + "-short.mp4"))
-    render(product, output)
+    plan = None
+    if args.storyboard:
+        plan = json.loads(Path(args.storyboard).read_text(encoding="utf-8"))
+        if str(plan.get("code")) != str(product["code"]) or len(plan.get("segments", [])) != 5:
+            raise ValueError("Storyboard must describe this product and exactly five scenes")
+    render(product, output, plan)
 
 
 if __name__ == "__main__":
