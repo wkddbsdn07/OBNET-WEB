@@ -1,0 +1,55 @@
+name: Verify OBNOTE Supabase secret
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/verify-supabase.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify server-only RPC access without changing products
+        env:
+          OBNOTE_SUPABASE_SECRET_KEY: ${{ secrets.OBNOTE_SUPABASE_SECRET_KEY }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError, URLError
+
+          key = os.getenv("OBNOTE_SUPABASE_SECRET_KEY", "")
+          if not key.startswith("sb_secret_"):
+              sys.exit("Secret missing or invalid type. Set OBNOTE_SUPABASE_SECRET_KEY to the Supabase sb_secret_ server key in repository Actions secrets.")
+
+          req = Request(
+              "https://bidcctugofnvfilywick.supabase.co/rest/v1/rpc/obnote_manage_product",
+              data=json.dumps({"p_action":"verify-only","p_code":None,"p_data":{}}).encode("utf-8"),
+              method="POST",
+              headers={"apikey":key,"Accept":"application/json","Content-Type":"application/json"}
+          )
+          try:
+              with urlopen(req, timeout=20):
+                  sys.exit("Unexpected success: verification operation must be rejected without altering data.")
+          except HTTPError as exc:
+              try:
+                  body = json.loads(exc.read(2000).decode("utf-8"))
+              except (ValueError, UnicodeDecodeError):
+                  sys.exit("Supabase returned an unexpected error response.")
+              if exc.code == 400 and "Unsupported action" in body.get("message", ""):
+                  print("PASS: GitHub Actions secret is present, and the protected Supabase management RPC is accessible.")
+                  print("PASS: Unsupported verification action was rejected; no product data changed.")
+              else:
+                  sys.exit("Supabase rejected the secret or protected RPC: HTTP " + str(exc.code))
+          except URLError as exc:
+              sys.exit("Supabase was unreachable: " + str(exc.reason))
+          PY
