@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: "Product name (required)"
+        description: "Product name"
         type: string
         required: true
       category:
-        description: "Category"
+        description: "Product category"
         type: choice
         options:
           - DESK TECH
@@ -22,7 +22,7 @@ on:
         type: string
         required: false
       description:
-        description: "Description (required)"
+        description: "Description"
         type: string
         required: true
       features:
@@ -30,15 +30,15 @@ on:
         type: string
         required: false
       image_url:
-        description: "Authorized HTTPS product photo URL"
+        description: "Authorized HTTPS image URL"
         type: string
         required: false
       price:
-        description: "Optional price, e.g. 29.99"
+        description: "Price, blank for unknown"
         type: string
         required: false
       currency:
-        description: "Three-letter currency code"
+        description: "Currency"
         type: choice
         options:
           - USD
@@ -46,37 +46,30 @@ on:
           - EUR
         default: USD
       purchase_url:
-        description: "Approved HTTPS seller URL (optional)"
+        description: "Approved HTTPS seller URL"
         type: string
         required: false
       is_demo:
-        description: "Demo product (no live purchase link or price)"
+        description: "Demo product? (no price or purchase link)"
         type: boolean
         default: true
 
 permissions:
-  contents: write
-  pages: write
+  contents: read
 
 concurrency:
-  group: obnote-product-registry-main
+  group: obnote-product-admin
   cancel-in-progress: false
 
 jobs:
-  register-product:
+  register:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Get repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          persist-credentials: true
-      - name: Verify branch is current
-        run: git pull --ff-only origin main
-      - name: Allocate product code and register product
-        id: registration
+      - uses: actions/checkout@v4
+      - name: Add product to Supabase with automatically assigned code
         env:
+          OBNOTE_SUPABASE_SECRET_KEY: ${{ secrets.OBNOTE_SUPABASE_SECRET_KEY }}
           PRODUCT_NAME: ${{ inputs.name }}
           PRODUCT_CATEGORY: ${{ inputs.category }}
           PRODUCT_TAGLINE: ${{ inputs.tagline }}
@@ -87,20 +80,4 @@ jobs:
           PRODUCT_CURRENCY: ${{ inputs.currency }}
           PRODUCT_PURCHASE_URL: ${{ inputs.purchase_url }}
           PRODUCT_IS_DEMO: ${{ inputs.is_demo }}
-        run: python3 scripts/add_product.py --from-env
-      - name: Commit catalog and publish
-        env:
-          NEW_CODE: ${{ steps.registration.outputs.code }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- products.json
-          git commit -m "Register OBNOTE product ${NEW_CODE}"
-          git push origin HEAD:main
-          echo "Product code ${NEW_CODE} added to products.json."
-      - name: Request GitHub Pages rebuild
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
-          echo "Requested GitHub Pages rebuild for the new catalog."
+        run: python3 scripts/manage_products.py add
