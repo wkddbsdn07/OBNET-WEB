@@ -1,0 +1,53 @@
+[
+  {
+    "code": "1001",
+    "name": "Orbit Dock",
+    "category": "DESK TECH",
+    "tagline": "A cleaner desk, by design.",
+    "description": "A concept desktop dock demonstrating how a product page could introduce elegant cable organization and workspace essentials.",
+    "features": [
+      "Concept product for interface testing",
+      "Geometric desktop accessory visualization",
+      "No actual listing or price"
+    ],
+    "image_url": null,
+    "price": null,
+    "currency": "USD",
+    "purchase_url": null,
+    "is_demo": true
+  },
+  {
+    "code": "1002",
+    "name": "Halo Light",
+    "category": "WORKSPACE",
+    "tagline": "Light the way you work.",
+    "description": "A conceptual ambient desk lamp entry designed to demonstrate a futuristic lighting product presentation.",
+    "features": [
+      "Concept product for interface testing",
+      "Soft circular light form",
+      "No actual listing or price"
+    ],
+    "image_url": null,
+    "price": null,
+    "currency": "USD",
+    "purchase_url": null,
+    "is_demo": true
+  },
+  {
+    "code": "1003",
+    "name": "Modular Grid",
+    "category": "DESK ACCESSORIES",
+    "tagline": "Find room for better ideas.",
+    "description": "A concept modular organizer entry showing how small geometric objects can make a digital product catalog feel cohesive.",
+    "features": [
+      "Concept product for interface testing",
+      "Stackable geometric arrangement",
+      "No actual listing or price"
+    ],
+    "image_url": null,
+    "price": null,
+    "currency": "USD",
+    "purchase_url": null,
+    "is_demo": true
+  }
+]
