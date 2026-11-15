@@ -115,8 +115,33 @@ def request_supabase(key, action, code, data):
         with urlopen(request, timeout=25) as response:
             return json.load(response)
     except HTTPError as exc:
-        message = exc.read(1200).decode("utf-8", errors="replace")
-        raise ValueError("Supabase API request failed (HTTP " + str(exc.code) + "): " + message) from None
+        response_text = exc.read(1200).decode("utf-8", errors="replace")
+        try:
+            error = json.loads(response_text)
+        except ValueError:
+            error = {}
+        if isinstance(error, dict) and error.get("code") == "23505":
+            problem = str(error.get("message", ""))
+            if "obnote_products_name_unique" in problem:
+                raise ValueError(
+                    "DUPLICATE NAME: A product with this name already exists. "
+                    "Edit the existing product instead."
+                ) from None
+            if "obnote_products_seller_url_unique" in problem:
+                raise ValueError(
+                    "DUPLICATE SELLER LINK: This purchase URL already belongs "
+                    "to another product. Edit the existing listing instead."
+                ) from None
+            raise ValueError(
+                "DUPLICATE PRODUCT: A unique value is already registered."
+            ) from None
+        if isinstance(error, dict):
+            detail = str(error.get("message", "Unknown API error"))[:300]
+        else:
+            detail = "Unknown API error"
+        raise ValueError(
+            "Supabase API request failed (HTTP " + str(exc.code) + "): " + detail
+        ) from None
     except URLError as exc:
         raise ValueError("Could not reach Supabase: " + str(exc.reason)) from None
 
