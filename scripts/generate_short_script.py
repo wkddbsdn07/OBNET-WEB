@@ -43,9 +43,9 @@ def storyboard(product):
     name = plain(product["name"], 100)
     code = plain(product["code"], 24)
     is_demo = bool(product.get("is_demo"))
-    tag = plain(product.get("tagline"), 110)
-    features = [plain(x, 110) for x in product.get("features", []) if plain(x)][:2]
-    third = ("This is a fictional concept, shown only as a demo."
+    tag = plain(product.get("tagline"), 54)
+    features = [plain(x, 55) for x in product.get("features", []) if plain(x)][:1]
+    third = ("Concept preview. Not a real product."
              if is_demo else
              (". ".join(features)+("." if features else "")
               if features else "View the product details using its code."))
