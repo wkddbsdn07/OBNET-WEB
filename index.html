@@ -193,13 +193,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#backdrop").clas
 // Publishable (public) key only. Supabase RLS restricts public users to SELECT published rows.
 const DB_URL="https://bidcctugofnvfilywick.supabase.co";
 const DB_PUBLIC_KEY="sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ";
-async function catalogFromJson(){
-  const response=await fetch("./products.json",{cache:"no-store"});
-  if(!response.ok)throw new Error("GitHub catalog HTTP "+response.status);
-  const data=await response.json();
-  if(!Array.isArray(data))throw new Error("GitHub catalog must be an array");
-  return data;
-}
 async function catalogFromSupabase(){
   const fields="code,name,category,tagline,description,features,image_url,price,currency,purchase_url,is_demo";
   const endpoint=DB_URL+"/rest/v1/products?select="+encodeURIComponent(fields)+"&published=eq.true&order=code.asc";
@@ -210,24 +203,23 @@ async function catalogFromSupabase(){
   return data;
 }
 async function loadProducts(){
-  // Transitional approach: GitHub remains the registration source of truth.
-  // Include published Supabase-only entries but prefer newer GitHub entries for matching codes.
-  const [db,file]=await Promise.allSettled([catalogFromSupabase(),catalogFromJson()]);
-  const combined=new Map();
-  if(db.status==="fulfilled"){
-    for(const raw of db.value){const p=cleanProduct(raw);if(p)combined.set(p.code,p)}
-  }else{console.warn("Supabase catalog unavailable; using GitHub catalog",db.reason)}
-  if(file.status==="fulfilled"){
-    for(const raw of file.value){const p=cleanProduct(raw);if(p)combined.set(p.code,p)}
-  }else{console.warn("GitHub catalog unavailable; using Supabase catalog",file.reason)}
-  if(!combined.size){
-    $("#result").textContent="Live catalog is temporarily unavailable. Showing built-in demo items.";
-    return;
+  // Supabase is authoritative. Never revive deleted or unpublished products from a stale file.
+  try {
+    const raw=await catalogFromSupabase();
+    const seen=new Set();
+    products=raw.map(cleanProduct).filter(p=>{
+      if(!p||seen.has(p.code))return false;
+      seen.add(p.code);return true;
+    }).sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}));
+    renderProducts();
+    $("#result").textContent=products.length?"":"No products are published yet.";
+    const code=new URL(location.href).searchParams.get("code");
+    if(code)openProduct(code.toUpperCase());
+  } catch(err) {
+    console.warn("Could not load the live product catalog",err);
+    products=[];renderProducts();
+    $("#result").textContent="Live catalog temporarily unavailable. Please try again.";
   }
-  products=Array.from(combined.values()).sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}));
-  renderProducts();
-  const code=new URL(location.href).searchParams.get("code");
-  if(code)openProduct(code.toUpperCase());
 }
 renderProducts();
 const initial=new URL(location.href).searchParams.get("code");
