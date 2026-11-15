@@ -7,6 +7,9 @@ on:
     paths:
       - "scripts/add_product.py"
       - "scripts/manage_products.py"
+      - "scripts/audit_catalog.py"
+      - "index.html"
+      - "tests/test_audit_catalog.py"
       - "tests/test_add_product.py"
       - "tests/test_manage_products.py"
       - ".github/workflows/test-product-codes.yml"
@@ -22,5 +25,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Test code allocation without changing real products
+      - name: Test catalog and management without changing live products
         run: python3 -m unittest discover -s tests -v
+      - name: Check inline frontend JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          page = Path("index.html").read_text(encoding="utf-8")
+          head = page.index("<script>") + len("<script>")
+          tail = page.index("</script>",head)
+          Path("/tmp/obnote-site.js").write_text(page[head:tail],encoding="utf-8")
+          PY
+          node --check /tmp/obnote-site.js
