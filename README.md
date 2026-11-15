@@ -42,3 +42,9 @@ Database DDL: `supabase/schema.sql` and `supabase/product-management.sql`; initi
 **Testing:** `python3 -m unittest discover -s tests -v`. The GitHub Actions test workflow checks CLI input validation and the old numbering helper. Database-level create/edit/delete and role privilege tests were also run separately.
 
 This GitHub Pages deployment is a non-commercial demo. Check hosting and affiliate program terms before commercial use.
+
+## Duplicate listing protection
+
+Supabase now enforces uniqueness for **product names** and **seller URLs**, for both additions and edits. These are atomic database unique indexes, so concurrent submissions cannot create an exact normalized duplicate. SQL is in `supabase/prevent-duplicate-products.sql`. A duplicate submission fails with a friendly **DUPLICATE NAME** or **DUPLICATE SELLER LINK** message in GitHub Actions.
+
+Normalization: names ignore casing, leading/trailing spaces, and repeated whitespace. Seller URLs ignore casing, fragments (`#...`) and trailing slashes. Query parameters (`?...`) remain significant, so tracking-URL variants and differently named listings may still need human review. Blank seller URLs are allowed. Product codes stay unique using the existing primary key.
