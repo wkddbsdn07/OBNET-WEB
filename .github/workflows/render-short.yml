@@ -75,5 +75,6 @@ jobs:
             dist/*.mp4
             dist/*.json
             dist/*.srt
+            dist/*.txt
           retention-days: 7
           if-no-files-found: error
