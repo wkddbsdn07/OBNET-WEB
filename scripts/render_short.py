@@ -112,6 +112,9 @@ def layout(draw, product, scene):
     if product.get("is_demo"):
         draw.text((55, 1805), "CONCEPT DEMO  |  NOT A REAL PRODUCT",
                   font=font(19, True), fill=MUTED)
+    else:
+        draw.text((55, 1805), "CHECK SELLER FOR CURRENT DETAILS",
+                  font=font(19, True), fill=MUTED)
     draw.text((940, 1745), f"{scene + 1}/5", font=font(25, True), fill=MUTED)
 
 
@@ -173,6 +176,7 @@ def draw_scene(product, i, caption=None):
         centered_lines(draw, ["FIND IT BY CODE"], 63, 615, SILVER)
         centered_lines(draw, [str(product["code"])], 180, 815, INK)
         centered_lines(draw, ["SEARCH ON OBNOTE"], 52, 1150, SILVER)
+        centered_lines(draw, ["obnote.vercel.app"], 44, 1290, SILVER)
     render_caption(draw, caption)
     return image
 
