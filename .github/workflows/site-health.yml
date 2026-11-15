@@ -1,0 +1,26 @@
+name: Check OBNOTE site health
+
+on:
+  schedule:
+    # Approximately 09:17 KST daily (GitHub may delay scheduled jobs).
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/health_check.py
+      - .github/workflows/site-health.yml
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check branded production site, privacy notice and published products API
+        env:
+          OBNOTE_SUPABASE_PUBLIC_KEY: sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ
+        run: python3 scripts/health_check.py
