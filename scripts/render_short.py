@@ -129,7 +129,7 @@ def render_caption(draw, label):
     """Draw source-backed captions directly, avoiding external subtitle codecs."""
     if not label:
         return
-    label = re.sub(r"\\s+", " ", str(label)).strip()[:200]
+    label = re.sub(r"\s+", " ", str(label)).strip()[:200]
     # Captions stay inside the Shorts center safe zone, above footer metadata.
     lines = fit_lines(draw, label, 38, 840, 2)
     if not lines:
