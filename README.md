@@ -35,7 +35,7 @@ Once the secret is configured:
 
 Updates appear through the Supabase Data API without a GitHub Pages rebuild. Editing an item to `is_demo=true` while it has price/purchase URL requires clearing those fields first. Demo products do not expose live purchase links or verified prices.
 
-**Status:** Backend CRUD and permission tests passed. The GitHub Actions flows cannot be marked end-to-end tested until the repository secret is configured.
+**Status:** The backend and GitHub Actions secret were tested with a temporary unpublished product: create, edit and delete all passed. Individual add/edit/delete buttons are operational workflows; actual real-product registration requires verified product information.
 
 ## Code and database security
 
@@ -62,3 +62,25 @@ The [daily audit](.github/workflows/audit-catalog.yml) runs at **09:07 KST** and
 [Render OBNOTE Shorts template](.github/workflows/render-short.yml) accepts any published product code and produces a **silent** 1080×1920 MP4, original fact-limited English narration JSON, and an SRT subtitle file in a downloadable GitHub Actions artifact. It never uploads to YouTube. The clip uses self-created geometric graphics and type only: no third-party photographs, copyrighted music or guessed product claims. Demo items are visibly labeled as fictional. [Video renderer](scripts/render_short.py), [narration generator](scripts/generate_short_script.py).
 
 **31-item tracking:** [ROADMAP.md](ROADMAP.md).
+
+## Automated Shorts drafts (no YouTube publishing)
+
+Each **Add OBNOTE product** workflow now has an enabled-by-default `render_draft` option. When the product is successfully registered, GitHub Actions passes its newly assigned code into the reusable [Render OBNOTE Shorts template](.github/workflows/render-short.yml) workflow. The workflow produces:
+
+- Original **1080×1920 MP4 with in-frame captions and offline English eSpeak NG narration**
+- A silent backup MP4
+- Original fact-limited narration JSON + SRT subtitle file
+- An English YouTube title and description **draft**, including a product code URL on `obnote.vercel.app`
+- A downloadable GitHub Actions artifact, retained for seven days
+
+The reuse mechanism was verified end-to-end with a fictional demo item in [Verify OBNOTE auto-draft pipeline](.github/workflows/verify-reusable-render.yml). The separate GitHub product registration and generation chain is wired, but a real product has not yet been registered. No YouTube channel OAuth or automatic video publishing is enabled.
+
+The offline voice is understandable but intentionally basic, not a commercial-grade neural voice. The renderer draws original graphic shapes and text; it does not download third-party product photos or claim to have tested products. Concept demo footage is labeled clearly.
+
+## Failure handling
+
+The public catalog fetcher uses [temporary-error retries](scripts/catalog_http.py) for HTTP 408/429/5xx and network outages. Permission and missing-item errors do not retry. Failed jobs show GitHub Actions errors and logs.
+
+[Notify OBNOTE workflow failure](.github/workflows/notify-failure.yml) observes failures of the core product, Shorts and freshness workflows. If the optional secret `OBNOTE_DISCORD_WEBHOOK` is set in **GitHub Actions Secrets**, a simple message with the failed Actions run link can also be sent to Discord. Without that secret, no external alert is sent. A Discord webhook secret must **never** be committed or pasted into the public site.
+
+These are **drafts and diagnostics**, not automatic advertising or monetization.
