@@ -47,6 +47,33 @@ class ManageProductsTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Missing GitHub Actions secret"):
             request_supabase("", "add", None, {"name": "Test"})
 
+    def test_duplicate_name_returns_clear_error(self):
+        import io
+        import json
+        from urllib.error import HTTPError
+
+        response = {"code": "23505",
+                    "message": 'duplicate key value violates unique constraint "obnote_products_name_unique"'}
+        failure = HTTPError("https://example.invalid", 409, "Conflict", {},
+                            io.BytesIO(json.dumps(response).encode("utf-8")))
+        with patch("manage_products.urlopen", side_effect=failure):
+            with self.assertRaisesRegex(ValueError, "DUPLICATE NAME"):
+                request_supabase("sb_secret_test", "add", None, {"name": "Existing"})
+
+    def test_duplicate_seller_url_returns_clear_error(self):
+        import io
+        import json
+        from urllib.error import HTTPError
+
+        response = {"code": "23505",
+                    "message": 'duplicate key value violates unique constraint "obnote_products_seller_url_unique"'}
+        failure = HTTPError("https://example.invalid", 409, "Conflict", {},
+                            io.BytesIO(json.dumps(response).encode("utf-8")))
+        with patch("manage_products.urlopen", side_effect=failure):
+            with self.assertRaisesRegex(ValueError, "DUPLICATE SELLER LINK"):
+                request_supabase("sb_secret_test", "add", None,
+                                 {"purchase_url": "https://example.invalid/item"})
+
     def test_unknown_field_not_allowed(self):
         with self.assertRaisesRegex(ValueError, "Unsupported"):
             edit_payload("code", "9999")
