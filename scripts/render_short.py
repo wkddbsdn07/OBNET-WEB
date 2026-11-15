@@ -12,7 +12,8 @@ from pathlib import Path
 import re
 import subprocess
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from catalog_http import fetch_json
 
 from PIL import Image, ImageDraw, ImageFont
 from imageio_ffmpeg import get_ffmpeg_exe
@@ -38,8 +39,7 @@ def get_product(code, key):
         raise ValueError("A public Supabase key is required")
     query = urlencode({"select": "code,name,category,tagline,description,features,is_demo", "code": "eq." + code, "published": "eq.true"})
     url = DB + "/rest/v1/products?" + query
-    with urlopen(Request(url, headers={"apikey": key, "Accept": "application/json"}), timeout=30) as response:
-        result = json.load(response)
+    result = fetch_json(Request(url, headers={"apikey": key, "Accept": "application/json"}), timeout=30)
     if not isinstance(result, list) or len(result) != 1:
         raise ValueError("Published product not found: " + code)
     return result[0]
