@@ -1,0 +1,64 @@
+name: Notify OBNOTE workflow failure
+
+on:
+  workflow_run:
+    workflows:
+      - Add OBNOTE product
+      - Edit OBNOTE product
+      - Delete OBNOTE product
+      - Render OBNOTE Shorts template
+      - Audit OBNOTE price and stock reviews
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  alert:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Log a link to the failed run
+        env:
+          RUN_NAME: ${{ github.event.workflow_run.name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          printf '::error title=OBNOTE workflow failed::Check %s (%s)\n' "$RUN_NAME" "$RUN_URL"
+          printf '## OBNOTE automation failure\n\n' >> "$GITHUB_STEP_SUMMARY"
+          printf 'Failed workflow: **%s**\n\n' "$RUN_NAME" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Details: %s\n\nUse **Re-run jobs** after resolving the problem.\n' "$RUN_URL" >> "$GITHUB_STEP_SUMMARY"
+      - name: Optional Discord webhook notification
+        env:
+          OBNOTE_DISCORD_WEBHOOK: ${{ secrets.OBNOTE_DISCORD_WEBHOOK }}
+          RUN_NAME: ${{ github.event.workflow_run.name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          from urllib.request import Request, urlopen
+
+          webhook = os.getenv("OBNOTE_DISCORD_WEBHOOK", "").strip()
+          if not webhook:
+              print("Discord notification skipped: OBNOTE_DISCORD_WEBHOOK not configured.")
+              sys.exit(0)
+          # The webhook URL stays in Actions Secrets, not on any public page.
+          if not webhook.startswith(("https://discord.com/api/webhooks/",
+                                     "https://discordapp.com/api/webhooks/")):
+              sys.exit("Webhook must use a Discord API webhook URL.")
+          workflow = os.getenv("RUN_NAME", "OBNOTE workflow")
+          url = os.getenv("RUN_URL", "")
+          message = "OBNOTE automation failed: " + workflow[:80] + "\n" + url[:260]
+          request = Request(
+              webhook,
+              data=json.dumps({"content": message, "allowed_mentions": {"parse": []}}).encode(),
+              headers={"Content-Type": "application/json"},
+              method="POST"
+          )
+          with urlopen(request, timeout=15) as response:
+              if response.status not in (200, 204):
+                  raise RuntimeError("Unexpected Discord notification response")
+          print("Discord failure notice sent.")
+          PY
