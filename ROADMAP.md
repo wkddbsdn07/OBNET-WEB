@@ -57,7 +57,7 @@ This is a prototype roadmap. Done means the core function has been built and tes
 
 ## Verified building blocks
 
-- [GitHub Pages](https://wkddbsdn07.github.io/OBNET-WEB/) — site reads published Supabase products.
+- [Public OBNOTE address](https://obnote.vercel.app/) — Vercel reverse-proxies GitHub Pages to keep the website current without changing the GitHub username. The site reads published Supabase products.
 - [Product administration](.github/workflows/add-product.yml), [edit](.github/workflows/edit-product.yml), [delete](.github/workflows/delete-product.yml) — secret-backed actions.
 - [Daily price/stock record audit](.github/workflows/audit-catalog.yml) — verifies **review dates**, not real-time seller stock.
 - [Branded silent video + narration/subtitle generator](.github/workflows/render-short.yml) — generates a downloadable Actions artifact using a published product code.
