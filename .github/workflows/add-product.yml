@@ -1,0 +1,99 @@
+name: Add OBNOTE product
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Product name (required)"
+        type: string
+        required: true
+      category:
+        description: "Category"
+        type: choice
+        options:
+          - DESK TECH
+          - IT & GADGETS
+          - DESK ACCESSORIES
+          - WORKSPACE
+        default: DESK TECH
+        required: true
+      tagline:
+        description: "Short tagline"
+        type: string
+        required: false
+      description:
+        description: "Description (required)"
+        type: string
+        required: true
+      features:
+        description: "Features separated by |"
+        type: string
+        required: false
+      image_url:
+        description: "Authorized HTTPS product photo URL"
+        type: string
+        required: false
+      price:
+        description: "Optional price, e.g. 29.99"
+        type: string
+        required: false
+      currency:
+        description: "Three-letter currency code"
+        type: choice
+        options:
+          - USD
+          - KRW
+          - EUR
+        default: USD
+      purchase_url:
+        description: "Approved HTTPS seller URL (optional)"
+        type: string
+        required: false
+      is_demo:
+        description: "Demo product (no live purchase link or price)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: obnote-product-registry-main
+  cancel-in-progress: false
+
+jobs:
+  register-product:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Verify branch is current
+        run: git pull --ff-only origin main
+      - name: Allocate product code and register product
+        id: registration
+        env:
+          PRODUCT_NAME: ${{ inputs.name }}
+          PRODUCT_CATEGORY: ${{ inputs.category }}
+          PRODUCT_TAGLINE: ${{ inputs.tagline }}
+          PRODUCT_DESCRIPTION: ${{ inputs.description }}
+          PRODUCT_FEATURES: ${{ inputs.features }}
+          PRODUCT_IMAGE_URL: ${{ inputs.image_url }}
+          PRODUCT_PRICE: ${{ inputs.price }}
+          PRODUCT_CURRENCY: ${{ inputs.currency }}
+          PRODUCT_PURCHASE_URL: ${{ inputs.purchase_url }}
+          PRODUCT_IS_DEMO: ${{ inputs.is_demo }}
+        run: python3 scripts/add_product.py --from-env
+      - name: Commit catalog and publish
+        env:
+          NEW_CODE: ${{ steps.registration.outputs.code }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- products.json
+          git commit -m "Register OBNOTE product ${NEW_CODE}"
+          git push origin HEAD:main
+          echo "Product code ${NEW_CODE} added. GitHub Pages will rebuild automatically."
