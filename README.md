@@ -84,3 +84,16 @@ The public catalog fetcher uses [temporary-error retries](scripts/catalog_http.p
 [Notify OBNOTE workflow failure](.github/workflows/notify-failure.yml) observes failures of the core product, Shorts and freshness workflows. If the optional secret `OBNOTE_DISCORD_WEBHOOK` is set in **GitHub Actions Secrets**, a simple message with the failed Actions run link can also be sent to Discord. Without that secret, no external alert is sent. A Discord webhook secret must **never** be committed or pasted into the public site.
 
 These are **drafts and diagnostics**, not automatic advertising or monetization.
+
+## Branded address health monitoring
+
+Production hostname: **https://obnote.vercel.app/**.
+
+The production deployment is a Vercel **external rewrite** to the existing GitHub Pages site. The Vercel deployment must include the rewrite rules and **must not include a local `index.html`**: the filesystem would take precedence, serving a stale placeholder instead of the current catalog. This issue was fixed and verified from a GitHub-hosted runner.
+
+[Check OBNOTE site health](.github/workflows/site-health.yml) runs daily at approximately **09:17 KST** and can also be run manually. It checks:
+- The branded homepage contains the actual product search form (not merely the OBNOTE word).
+- The privacy page is available.
+- The public read-only Supabase products API responds successfully.
+
+The status monitor does not read or edit private customer data, and does not need administrator credentials. Failures appear in GitHub Actions and feed the optional [failure notification](.github/workflows/notify-failure.yml) workflow.
