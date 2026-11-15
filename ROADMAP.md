@@ -64,3 +64,9 @@ This is a prototype roadmap. Done means the core function has been built and tes
 - [Tests](.github/workflows/test-product-codes.yml) — catalog, UI script syntax, stock audit, and narration tests.
 
 **Safety:** No real product claims, prices, affiliate status, copyrighted photos, or ad income should be invented. The 1001–1004 items remain fictional demos. Administrative keys are stored only in GitHub Actions Secrets, never in the website.
+
+## Live deployment and monitoring
+
+- Brand URL `https://obnote.vercel.app/` is a verified production Vercel reverse proxy.
+- The initial proxy served a static placeholder at the root because Vercel prioritizes `index.html` over rewrites. A new deployment without a local `index.html` fixed this. The [site health run](https://github.com/wkddbsdn07/OBNET-WEB/actions/runs/43706671880) verified the actual product search form, privacy notice, and read-only Supabase API.
+- [Daily production health workflow](.github/workflows/site-health.yml) checks actual web page content at approximately 09:17 KST. GitHub scheduled execution may be delayed.
