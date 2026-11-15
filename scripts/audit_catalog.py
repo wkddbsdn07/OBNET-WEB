@@ -10,7 +10,8 @@ from datetime import datetime, timedelta, timezone
 import json
 import os
 import sys
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from catalog_http import fetch_json
 
 DB = "https://bidcctugofnvfilywick.supabase.co"
 FIELDS = "code,name,is_demo,price,price_checked_at,stock_status,stock_checked_at"
@@ -63,8 +64,7 @@ def main():
         "select": FIELDS, "published": "eq.true", "order": "code.asc"
     })
     request = Request(endpoint, headers={"apikey": key, "Accept": "application/json"})
-    with urlopen(request, timeout=25) as response:
-        products = json.load(response)
+    products = fetch_json(request, timeout=25)
     if not isinstance(products, list):
         raise ValueError("Expected a list of published products")
 
