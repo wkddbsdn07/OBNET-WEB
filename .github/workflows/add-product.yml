@@ -56,6 +56,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: obnote-product-registry-main
@@ -96,4 +97,10 @@ jobs:
           git add -- products.json
           git commit -m "Register OBNOTE product ${NEW_CODE}"
           git push origin HEAD:main
-          echo "Product code ${NEW_CODE} added. GitHub Pages will rebuild automatically."
+          echo "Product code ${NEW_CODE} added to products.json."
+      - name: Request GitHub Pages rebuild
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
+          echo "Requested GitHub Pages rebuild for the new catalog."
