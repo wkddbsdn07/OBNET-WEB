@@ -15,6 +15,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from PIL import Image, ImageDraw, ImageFont
+from imageio_ffmpeg import get_ffmpeg_exe
 
 WIDTH, HEIGHT = 1080, 1920
 DB = "https://bidcctugofnvfilywick.supabase.co"
@@ -177,7 +178,7 @@ def render(product, output):
     sequence.write_text("".join(lines), encoding="utf-8")
     output.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run([
-        "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+        get_ffmpeg_exe(), "-hide_banner", "-loglevel", "error", "-y",
         "-f", "concat", "-safe", "0", "-i", str(sequence),
         "-vf", "fps=24,format=yuv420p",
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "24",
