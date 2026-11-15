@@ -187,6 +187,18 @@ def main(action):
         + str(result.get("code", "?"))
         + " (" + str(result.get("name", "")) + ")"
     )
+    if action == "add":
+        new_code = str(result.get("code", ""))
+        if not re.fullmatch(r"[A-Za-z0-9-]{1,24}", new_code):
+            raise ValueError("Database returned an invalid product code")
+        github_output = os.getenv("GITHUB_OUTPUT", "")
+        if github_output:
+            with open(github_output, "a", encoding="utf-8") as output:
+                output.write("code=" + new_code + "\n")
+        github_summary = os.getenv("GITHUB_STEP_SUMMARY", "")
+        if github_summary:
+            with open(github_summary, "a", encoding="utf-8") as output:
+                output.write("Registered OBNOTE product code: `" + new_code + "`\n")
     return result
 
 
