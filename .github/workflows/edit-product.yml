@@ -1,0 +1,50 @@
+name: Edit OBNOTE product
+
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: "Existing product code, e.g. 1004"
+        type: string
+        required: true
+      field:
+        description: "One field to edit"
+        type: choice
+        required: true
+        options:
+          - name
+          - category
+          - tagline
+          - description
+          - features
+          - image_url
+          - price
+          - currency
+          - purchase_url
+          - is_demo
+          - published
+      value:
+        description: "New value. Use true/false for flags. | separates features. Blank clears price or URLs."
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: obnote-product-admin
+  cancel-in-progress: false
+
+jobs:
+  edit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update item in Supabase
+        env:
+          OBNOTE_SUPABASE_SECRET_KEY: ${{ secrets.OBNOTE_SUPABASE_SECRET_KEY }}
+          PRODUCT_CODE: ${{ inputs.code }}
+          PRODUCT_FIELD: ${{ inputs.field }}
+          PRODUCT_VALUE: ${{ inputs.value }}
+        run: python3 scripts/manage_products.py edit
