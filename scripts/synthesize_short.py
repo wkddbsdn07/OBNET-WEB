@@ -11,7 +11,6 @@ from pathlib import Path
 import subprocess
 import wave
 
-from imageio_ffmpeg import get_ffmpeg_exe
 
 
 def wav_duration(path):
@@ -51,7 +50,9 @@ def create_voice_segments(plan, folder, executable="espeak-ng"):
 def mux_voice(video, tracks, durations, output, ffmpeg=None):
     if len(tracks) != len(durations) or not tracks:
         raise ValueError("Voice segments must match scene durations")
-    ffmpeg = ffmpeg or get_ffmpeg_exe()
+    if ffmpeg is None:
+        from imageio_ffmpeg import get_ffmpeg_exe
+        ffmpeg = get_ffmpeg_exe()
     filters = []
     for i, length in enumerate(durations):
         filters.append(
