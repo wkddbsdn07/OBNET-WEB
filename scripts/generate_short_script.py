@@ -71,6 +71,30 @@ def storyboard(product):
               else "Check the seller for current details. Affiliate disclosures may apply."}
 
 
+def youtube_metadata(product):
+    """Draft copy only; nothing is uploaded or scheduled on YouTube."""
+    name = plain(product["name"], 70)
+    code = plain(product["code"], 24)
+    is_demo = bool(product.get("is_demo"))
+    title = ("OBNOTE Concept Demo | " if is_demo else "Discover ") + name + " #Shorts"
+    title = title[:100]
+    url = "https://obnote.vercel.app/?code=" + code
+    if is_demo:
+        details = "Fictional concept demonstration. This is not a real product or purchase recommendation."
+    else:
+        details = (
+            "Information shown is based on the OBNOTE product catalog. "
+            "Always verify current specifications, prices and availability with the seller. "
+            "Check the website for any affiliate disclosure."
+        )
+    description = (
+        name + "\n\n" + details + "\n\n"
+        + "Find the product details using code " + code + ":\n" + url
+        + "\n\n#Shorts #DeskTech #OBNOTE\n"
+    )
+    return title, description
+
+
 def srt_time(seconds):
     total = int(round(seconds * 1000))
     h, rem = divmod(total, 3600000)
@@ -101,6 +125,9 @@ def main():
     base = folder / ("obnote-" + args.code)
     (Path(str(base) + "-script.json")).write_text(json.dumps(plan,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     (Path(str(base) + "-captions.srt")).write_text(srt_text(plan),encoding="utf-8")
+    title, description = youtube_metadata(product)
+    (Path(str(base) + "-youtube-title.txt")).write_text(title + "\n",encoding="utf-8")
+    (Path(str(base) + "-youtube-description.txt")).write_text(description,encoding="utf-8")
     print("Created original narration JSON and caption SRT for product",args.code)
 
 
