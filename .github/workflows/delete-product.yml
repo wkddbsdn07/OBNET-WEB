@@ -1,0 +1,28 @@
+name: Delete OBNOTE product
+
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: "Product code to permanently delete"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: obnote-product-admin
+  cancel-in-progress: false
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Delete item from Supabase
+        env:
+          OBNOTE_SUPABASE_SECRET_KEY: ${{ secrets.OBNOTE_SUPABASE_SECRET_KEY }}
+          PRODUCT_CODE: ${{ inputs.code }}
+        run: python3 scripts/manage_products.py delete
