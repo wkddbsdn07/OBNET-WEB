@@ -1,0 +1,66 @@
+name: Verify OBNOTE product CRUD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/verify-supabase-crud.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: obnote-product-admin
+  cancel-in-progress: false
+
+jobs:
+  verify-crud:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create, edit and delete an UNPUBLISHED test product
+        env:
+          OBNOTE_SUPABASE_SECRET_KEY: ${{ secrets.OBNOTE_SUPABASE_SECRET_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import sys
+          from scripts.manage_products import request_supabase
+
+          secret = os.environ.get("OBNOTE_SUPABASE_SECRET_KEY", "")
+          if not secret.startswith("sb_secret_"):
+              sys.exit("OBNOTE_SUPABASE_SECRET_KEY must be a server-side sb_secret_ key")
+
+          code = None
+          try:
+              result = request_supabase(secret, "add", None, {
+                  "name": "OBNOTE Internal CRUD Verification",
+                  "description": "Private temporary GitHub Actions database test.",
+                  "is_demo": True,
+                  "published": False,
+                  "category": "TEST",
+              })
+              code = result["code"]
+              if result.get("published") is not False:
+                  raise RuntimeError("Test item unexpectedly published")
+              print("Created unpublished internal test product.")
+
+              result = request_supabase(secret, "edit", code, {
+                  "tagline": "Admin edit verified",
+              })
+              if result.get("code") != code:
+                  raise RuntimeError("Edit returned wrong product")
+              print("Edited internal test product.")
+
+          finally:
+              if code:
+                  result = request_supabase(secret, "delete", code, {})
+                  if result.get("code") != code:
+                      raise RuntimeError("Delete returned wrong product")
+                  print("Deleted internal test product.")
+
+          print("PASS: GitHub Actions can add/edit/delete securely; no test listing remains.")
+          PY
