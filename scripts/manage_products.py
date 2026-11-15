@@ -23,7 +23,8 @@ RPC_URL = SUPABASE_URL + "/rest/v1/rpc/obnote_manage_product"
 
 EDITABLE = {
     "name", "category", "tagline", "description", "features",
-    "image_url", "price", "currency", "purchase_url", "is_demo", "published"
+    "image_url", "price", "currency", "purchase_url", "is_demo", "published",
+    "stock_status"
 }
 
 
@@ -34,6 +35,13 @@ def parse_boolean(value):
     if lowered in ("false", "0", "no", "off"):
         return False
     raise ValueError("Boolean fields accept true or false")
+
+
+def stock_status(value):
+    result = (value or "unknown").strip().lower()
+    if result not in ("unknown", "in_stock", "out_of_stock", "preorder"):
+        raise ValueError("Stock must be unknown, in_stock, out_of_stock, or preorder")
+    return result
 
 
 def product_payload():
@@ -53,11 +61,13 @@ def product_payload():
     if purchase_url and not purchase_url.startswith("https://"):
         raise ValueError("Only HTTPS purchase URLs are allowed")
     price = val("PRICE") or None
+    availability = stock_status(val("STOCK_STATUS"))
 
     # Demo entries never advertise a checkout or a verified price.
     if is_demo:
         purchase_url = None
         price = None
+        availability = "unknown"
 
     return {
         "name": val("NAME"),
@@ -71,12 +81,15 @@ def product_payload():
         "purchase_url": purchase_url,
         "is_demo": is_demo,
         "published": True,
+        "stock_status": availability,
     }
 
 
 def edit_payload(field, value):
     if field not in EDITABLE:
         raise ValueError("Unsupported edit field")
+    if field == "stock_status":
+        return {field: stock_status(value)}
     if field == "features":
         return {field: [item.strip() for item in value.split("|") if item.strip()][:8]}
     if field in ("price", "image_url", "purchase_url"):
