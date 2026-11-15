@@ -1,28 +1,37 @@
-# OBNOTE × Supabase — prepared integration
+# OBNOTE — Supabase integration
 
-Status: **NOT CONNECTED YET**. This repository currently has a working GitHub Pages website that reads `products.json`. Do not remove that fallback until the database has been created and tested.
+Status: **CONNECTED** (Supabase project: `bidcctugofnvfilywick`, Seoul).
 
-## Why Supabase?
+**Public product API:** `https://bidcctugofnvfilywick.supabase.co/rest/v1/products`
 
-We want a central product catalog that can eventually support a secure editor, stock and price tracking, and automated publication by Hermes. This must not expose administrative credentials to public website visitors.
+## Applied SQL
 
-## Database setup
+1. `schema.sql` — `public.products`, public read-only RLS, no public write privileges.
+2. `seed-demo.sql` — imported demo products 1001–1004.
+3. `product-management.sql` — internal code sequence starting at 1005 and protected add/edit/delete RPC, executed only by the `service_role` database role.
 
-1. Create an appropriate Supabase project in the chosen organization. Review project pricing and account eligibility before creation.
-2. Apply `schema.sql` to define `public.products`, database checks, published-only public SELECT policy, and no public writes.
-3. Apply `seed-demo.sql` to import the four fictional demonstration products, codes 1001 to 1004. The seed leaves existing records untouched.
-4. Verify the four codes via SQL and review Supabase's Security Advisor.
-5. Retrieve the project URL and a **publishable** API key. A publishable key can be used by public browser JavaScript **only with correct RLS**, and must never be confused with secret or service-role keys.
-6. After confirming the database works, update the website to read published products from the read-only Data API. Keep `products.json` as a temporary fallback during cutover.
+The CRUD smoke test created a temporary unpublished product, edited it and deleted it. **The test consumed code 1005** (sequences do not reclaim issued values), so the next allocation should be **1006** if nothing else is registered.
 
-## Security model
+## Catalog source of truth
 
-- Public users can **SELECT published products only**, not insert, update, or delete.
-- There is no login or write interface on the public static site.
-- GitHub Actions should only gain database write access through a properly managed secret stored in GitHub Actions Secrets (not committed to this repository). Never send the service-role key to frontend code.
-- Product codes are currently allocated by the GitHub Actions workflow against `products.json`. Before treating Supabase as the canonical product store, we must implement one authoritative allocator to avoid GitHub/Supabase code collisions.
-- Current demo products are fictional, not real offers. Display real product images and purchase links only with permission and correct disclosures.
+The browser reads **Supabase** as the sole live product catalog, so deleted or unpublished items cannot reappear from an out-of-date `products.json`. The JSON file is a historical backup only.
 
-## Current checklist state
+The public database key in `index.html` is a publishable key and is permitted in frontend code only because RLS restricts reading to `published=true` products. Neither GitHub Pages nor the frontend has a secret or service-role key.
 
-Site: running on GitHub Pages. Product registration and code generation: tested in GitHub Actions. Supabase project: none was available to the connected account when these files were prepared, so **the database is not yet running**.
+## GitHub Actions integration
+
+Repository workflows:
+
+- `.github/workflows/add-product.yml`
+- `.github/workflows/edit-product.yml`
+- `.github/workflows/delete-product.yml`
+
+All use `scripts/manage_products.py` and need the **GitHub Actions secret** named `OBNOTE_SUPABASE_SECRET_KEY` containing a server-side Supabase secret key (`sb_secret_...`). Without it the workflows fail safely and do not change the catalog.
+
+The existing Connected Supabase plugin allows database administration through authorized tool actions without adding this GitHub secret, but the mobile GitHub Actions buttons require the one-time secret setup. NEVER copy a secret into a public file or chat.
+
+## Security
+
+The management RPC in `public` uses `SECURITY INVOKER`, not `SECURITY DEFINER`; EXECUTE has been revoked from PUBLIC/anon/authenticated and granted only to service_role. The internal sequence is in a non-exposed schema.
+
+For production use, periodically check the Supabase Security Advisor and keep the commercial hosting and affiliate restrictions in mind.
