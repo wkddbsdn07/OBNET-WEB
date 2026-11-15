@@ -1,0 +1,56 @@
+import os
+import sys
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+from manage_products import edit_payload, product_payload, request_supabase
+
+
+class ManageProductsTest(unittest.TestCase):
+    def test_edit_can_clear_price_and_url(self):
+        self.assertEqual(edit_payload("price", ""), {"price": None})
+        self.assertEqual(edit_payload("purchase_url", ""), {"purchase_url": None})
+
+    def test_boolean_fields(self):
+        self.assertEqual(edit_payload("published", "false"), {"published": False})
+        self.assertEqual(edit_payload("is_demo", "true"), {"is_demo": True})
+        with self.assertRaises(ValueError):
+            edit_payload("published", "maybe")
+
+    def test_features(self):
+        self.assertEqual(edit_payload("features", "Fast | Quiet"),
+                         {"features": ["Fast", "Quiet"]})
+
+    def test_unapproved_url_refused(self):
+        with self.assertRaisesRegex(ValueError, "HTTPS"):
+            edit_payload("purchase_url", "http://unsafe.example")
+
+    def test_demo_removes_purchase_and_price(self):
+        env = {
+            "PRODUCT_NAME": "Test desk",
+            "PRODUCT_CATEGORY": "DESK TECH",
+            "PRODUCT_DESCRIPTION": "Test listing",
+            "PRODUCT_PRICE": "15.00",
+            "PRODUCT_PURCHASE_URL": "https://example.com/seller",
+            "PRODUCT_IS_DEMO": "true",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            result = product_payload()
+        self.assertIsNone(result["purchase_url"])
+        self.assertIsNone(result["price"])
+        self.assertTrue(result["published"])
+        self.assertTrue(result["is_demo"])
+
+    def test_secret_required_no_network_call(self):
+        with self.assertRaisesRegex(ValueError, "Missing GitHub Actions secret"):
+            request_supabase("", "add", None, {"name": "Test"})
+
+    def test_unknown_field_not_allowed(self):
+        with self.assertRaisesRegex(ValueError, "Unsupported"):
+            edit_payload("code", "9999")
+
+
+if __name__ == "__main__":
+    unittest.main()
