@@ -49,6 +49,11 @@ on:
         description: "Approved HTTPS seller URL"
         type: string
         required: false
+      stock_status:
+        description: "Seller-reported availability (unknown if unverified)"
+        type: choice
+        options: [unknown, in_stock, out_of_stock, preorder]
+        default: unknown
       is_demo:
         description: "Demo product? (no price or purchase link)"
         type: boolean
@@ -80,4 +85,5 @@ jobs:
           PRODUCT_CURRENCY: ${{ inputs.currency }}
           PRODUCT_PURCHASE_URL: ${{ inputs.purchase_url }}
           PRODUCT_IS_DEMO: ${{ inputs.is_demo }}
+          PRODUCT_STOCK_STATUS: ${{ inputs.stock_status }}
         run: python3 scripts/manage_products.py add
