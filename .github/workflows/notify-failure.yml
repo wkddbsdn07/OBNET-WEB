@@ -8,6 +8,7 @@ on:
       - Delete OBNOTE product
       - Render OBNOTE Shorts template
       - Audit OBNOTE price and stock reviews
+      - Check OBNOTE site health
     types: [completed]
 
 permissions:
