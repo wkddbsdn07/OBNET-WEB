@@ -21,6 +21,7 @@ on:
           - price
           - currency
           - purchase_url
+          - stock_status
           - is_demo
           - published
       value:
