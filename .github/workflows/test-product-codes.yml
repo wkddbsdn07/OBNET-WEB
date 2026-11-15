@@ -6,7 +6,9 @@ on:
       - main
     paths:
       - "scripts/add_product.py"
+      - "scripts/manage_products.py"
       - "tests/test_add_product.py"
+      - "tests/test_manage_products.py"
       - ".github/workflows/test-product-codes.yml"
   workflow_dispatch:
 
