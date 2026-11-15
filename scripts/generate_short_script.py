@@ -11,7 +11,8 @@ import os
 from pathlib import Path
 import re
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from catalog_http import fetch_json
 
 DB = "https://bidcctugofnvfilywick.supabase.co"
 DURATIONS = [2.4, 2.2, 2.8, 2.0, 3.0]
@@ -26,10 +27,8 @@ def fetch_product(code, key):
         "select": "code,name,tagline,description,features,is_demo,purchase_url",
         "code": "eq." + code, "published": "eq.true"
     })
-    with urlopen(Request(DB+"/rest/v1/products?"+q,
-                        headers={"apikey":key,"Accept":"application/json"}),
-                 timeout=25) as response:
-        result = json.load(response)
+    result = fetch_json(Request(DB+"/rest/v1/products?"+q,
+                                 headers={"apikey":key,"Accept":"application/json"}), timeout=25)
     if not isinstance(result, list) or len(result) != 1:
         raise ValueError("No published product matches " + code)
     return result[0]
