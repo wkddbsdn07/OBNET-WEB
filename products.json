@@ -49,5 +49,18 @@
     "currency": "USD",
     "purchase_url": null,
     "is_demo": true
+  },
+  {
+    "code": "1004",
+    "name": "Test Desk Stand",
+    "category": "DESK TECH",
+    "tagline": "",
+    "description": "Demo product for testing",
+    "features": [],
+    "image_url": null,
+    "price": null,
+    "currency": "USD",
+    "purchase_url": null,
+    "is_demo": true
   }
 ]
