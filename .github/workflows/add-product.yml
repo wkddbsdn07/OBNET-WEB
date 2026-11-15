@@ -58,6 +58,10 @@ on:
         description: "Demo product? (no price or purchase link)"
         type: boolean
         default: true
+      render_draft:
+        description: "Automatically create a private MP4 draft after registration"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -69,10 +73,13 @@ concurrency:
 jobs:
   register:
     runs-on: ubuntu-latest
+    outputs:
+      product_code: ${{ steps.manage.outputs.code }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Add product to Supabase with automatically assigned code
+        id: manage
         env:
           OBNOTE_SUPABASE_SECRET_KEY: ${{ secrets.OBNOTE_SUPABASE_SECRET_KEY }}
           PRODUCT_NAME: ${{ inputs.name }}
@@ -87,3 +94,12 @@ jobs:
           PRODUCT_IS_DEMO: ${{ inputs.is_demo }}
           PRODUCT_STOCK_STATUS: ${{ inputs.stock_status }}
         run: python3 scripts/manage_products.py add
+
+  render-draft:
+    needs: register
+    if: ${{ inputs.render_draft }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/render-short.yml
+    with:
+      product_code: ${{ needs.register.outputs.product_code }}
