@@ -46,3 +46,15 @@ Applied migration: `prevent-duplicate-products.sql`. Two unique indexes prevent 
 - This is not fuzzy duplicate detection; similar names and different tracked URLs may still refer to the same product.
 
 Verified using SQL insert/update collision assertions inside a rolled-back transaction. Existing products were not changed.
+
+## Price and inventory tracking migrations
+
+Applied in this order after the initial catalog and CRUD table:
+1. `prevent-duplicate-products.sql` — unique normalized product names and seller URLs.
+2. `price-stock-and-history.sql` — reported `stock_status` and review timestamps, private history table, update trigger, updated management RPC.
+3. `fix-price-check-on-clear.sql` — clearing a price also clears the recorded price review timestamp.
+4. `private-history-access-policy.sql` — explicit backend-only policy for private history.
+
+The private table is **not** exposed to public Data API visitors. Existing demo items retain `unknown` status and no price. Do not reapply the older `product-management.sql` afterward, as it describes the original pre-stock version of the RPC.
+
+The catalog audit reports records needing seller review; it does not fetch or verify real seller stock.
