@@ -1,6 +1,11 @@
 name: Render OBNOTE Shorts template
 
 on:
+  workflow_call:
+    inputs:
+      product_code:
+        type: string
+        required: true
   workflow_dispatch:
     inputs:
       product_code:
