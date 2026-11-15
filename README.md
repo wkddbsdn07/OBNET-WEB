@@ -2,7 +2,9 @@
 
 An English-language technology and desk-accessory product discovery prototype.
 
-**Live website:** https://wkddbsdn07.github.io/OBNET-WEB/
+**Public branded website:** https://obnote.vercel.app/
+
+**Architecture:** Vercel presents the public branded URL using an external rewrite to the unchanged GitHub Pages origin (`https://wkddbsdn07.github.io/OBNET-WEB/`). This preserves updates to the existing GitHub site without requiring a new Git integration or changing the GitHub account. Do not add a client-side redirect at the origin, as it would redirect the proxied site too.
 
 ## Current architecture
 
