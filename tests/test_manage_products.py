@@ -74,6 +74,25 @@ class ManageProductsTest(unittest.TestCase):
                 request_supabase("sb_secret_test", "add", None,
                                  {"purchase_url": "https://example.invalid/item"})
 
+    def test_stock_status_validation(self):
+        from manage_products import edit_payload
+        self.assertEqual(edit_payload("stock_status", "out_of_stock"),
+                         {"stock_status": "out_of_stock"})
+        with self.assertRaisesRegex(ValueError, "Stock"):
+            edit_payload("stock_status", "guaranteed_available")
+
+    def test_demo_never_claims_stock(self):
+        from manage_products import product_payload
+        environment = {
+            "PRODUCT_NAME": "Demo Lamp",
+            "PRODUCT_DESCRIPTION": "Demo only",
+            "PRODUCT_STOCK_STATUS": "in_stock",
+            "PRODUCT_IS_DEMO": "true",
+        }
+        with patch.dict(os.environ, environment, clear=True):
+            data = product_payload()
+        self.assertEqual(data["stock_status"], "unknown")
+
     def test_unknown_field_not_allowed(self):
         with self.assertRaisesRegex(ValueError, "Unsupported"):
             edit_payload("code", "9999")
