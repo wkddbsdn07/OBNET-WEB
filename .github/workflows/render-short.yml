@@ -1,0 +1,43 @@
+name: Render OBNOTE Shorts template
+
+on:
+  workflow_dispatch:
+    inputs:
+      product_code:
+        description: "Published product code to render (demo code: 1001)"
+        type: string
+        required: true
+        default: "1001"
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/render-short.yml
+
+permissions:
+  contents: read
+
+jobs:
+  render-short:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned rendering dependency
+        run: python -m pip install pillow==11.3.0
+      - name: Check FFmpeg is available
+        run: ffmpeg -version
+      - name: Render 1080x1920 silent Shorts template
+        env:
+          OBNOTE_SUPABASE_PUBLIC_KEY: sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ
+          CODE: ${{ inputs.product_code || '1001' }}
+        run: python3 scripts/render_short.py --code "$CODE"
+      - name: Upload generated Shorts video
+        uses: actions/upload-artifact@v4
+        with:
+          name: obnote-shorts-preview
+          path: dist/*.mp4
+          retention-days: 7
+          if-no-files-found: error
