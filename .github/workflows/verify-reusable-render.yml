@@ -1,0 +1,21 @@
+name: Verify OBNOTE auto-draft pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-reusable-render.yml"
+      - ".github/workflows/render-short.yml"
+      - "scripts/render_short.py"
+      - "scripts/synthesize_short.py"
+      - "scripts/generate_short_script.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-reusable-short:
+    uses: ./.github/workflows/render-short.yml
+    with:
+      product_code: "1001"
