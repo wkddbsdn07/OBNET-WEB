@@ -34,10 +34,18 @@ jobs:
           OBNOTE_SUPABASE_PUBLIC_KEY: sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ
           CODE: ${{ inputs.product_code || '1001' }}
         run: python3 scripts/render_short.py --code "$CODE"
+      - name: Generate original voiceover script and subtitle file
+        env:
+          OBNOTE_SUPABASE_sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ: PUBLIC_KEY
+          CODE: ${{ inputs.product_code || '1001' }}
+        run: python3 scripts/generate_short_script.py --code "$CODE"
       - name: Upload generated Shorts video
         uses: actions/upload-artifact@v4
         with:
           name: obnote-shorts-preview
-          path: dist/*.mp4
+          path: |
+            dist/*.mp4
+            dist/*.json
+            dist/*.srt
           retention-days: 7
           if-no-files-found: error
