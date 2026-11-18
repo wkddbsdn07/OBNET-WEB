@@ -8,84 +8,68 @@
 <link rel="icon" type="image/svg+xml" href="./assets/obnote-mark.svg">
 <meta name="description" content="OBNOTE: Discover what’s next. Explore curious technology and reimagined desk essentials by product code.">
 <title>OBNOTE — Discover What's Next</title>
-<style>
-:root{color-scheme:dark;--bg:#06080f;--fg:#f5f7fa;--muted:#aab3bf;--line:#313946;--accent:#dfe7f0;font-family:Inter,"Helvetica Neue",Arial,sans-serif}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--fg);min-width:280px}button,input{font:inherit}a{color:inherit;text-decoration:none}button{cursor:pointer}
-.page{width:min(1110px,calc(100% - 44px));margin:auto}.header{height:84px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;gap:11px;align-items:center;font-size:23px;font-weight:850;letter-spacing:.08em}.brand img{width:28px;height:28px}.header-links{display:flex;gap:26px;font-size:12px;letter-spacing:.08em;color:#bbbfc8}.header-links a:hover{color:white}
-.intro-tag{display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.17em;font-weight:800;color:var(--accent)}.intro-tag:before{content:"";display:block;width:25px;height:1px;background:var(--accent)}
-.hero{min-height:570px;padding:100px 0 68px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-80px;top:20px;width:490px;height:490px;border:1px solid #252831;border-radius:50%;box-shadow:0 0 0 60px #ffffff03,0 0 0 130px #ffffff02;pointer-events:none}.hero>*{position:relative;z-index:1}.hero h1{font-size:clamp(56px,9.3vw,124px);letter-spacing:-.092em;line-height:.96;margin:25px 0 25px;font-weight:780}.hero h1 em{font-weight:390;font-style:normal;color:var(--accent)}.description{font-size:16px;line-height:1.8;max-width:530px;color:#afb3bd;margin:0 0 30px}.search-wrap{display:flex;align-items:center;width:min(548px,100%);padding:8px;background:#1d2026;border:1px solid #444951;border-radius:14px;gap:9px}.search-wrap:focus-within{border-color:var(--accent)}.search-wrap svg{margin-left:12px;color:#bcc1ca;flex:none}.search-wrap input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:13px 5px;font-size:16px}.search-wrap input::placeholder{color:#8b929d}.search-wrap button{background:var(--accent);border:0;color:#11130b;border-radius:9px;font-weight:800;padding:14px 20px;white-space:nowrap}.search-wrap button:hover{background:#ffffff}.hint{font-size:12px;color:#777d88;margin:13px 0}.result{padding:12px 0;min-height:21px;font-size:13px;color:#dae7f5}
-.section{border-top:1px solid var(--line);padding:66px 0 78px}.section-top{display:flex;justify-content:space-between;align-items:end;gap:16px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.19em;color:#c5c8d0}.section h2{margin:13px 0 0;font-size:clamp(32px,4.5vw,52px);line-height:1.05;letter-spacing:-.06em}.section-top p{color:var(--muted);margin:0 0 3px;font-size:13px}.cards{margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{display:block;text-align:left;border:1px solid #343740;border-radius:18px;background:#17191f;color:inherit;padding:0;overflow:hidden;transition:transform .2s,border-color .2s}.card:hover,.card:focus-visible{transform:translateY(-4px);border-color:#bfcbd9;outline:none}.art{height:240px;position:relative;overflow:hidden;display:grid;place-items:center;background:radial-gradient(ellipse at 60% 45%,#303641 0%,#1a1c24 48%,#13151c 100%)}.art:before{content:"";position:absolute;border:1px solid #ffffff11;width:230px;height:230px;border-radius:50%}.art svg{width:80%;height:80%;filter:drop-shadow(0 24px 17px #0008)}.card-content{padding:22px}.meta{font-size:10px;color:#cad6e3;font-weight:850;letter-spacing:.16em;margin-bottom:12px}.card h3{font-size:21px;letter-spacing:-.045em;margin:0 0 7px}.card p{color:var(--muted);font-size:13px;line-height:1.6;margin:0}.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:23px;padding-top:16px;border-top:1px solid #31343a;color:#d9dce2;font-size:12px}.card-footer span:last-child{font-size:20px}
-.how{display:grid;grid-template-columns:1fr 1fr;gap:45px}.how ol{margin:0;padding:0;list-style:none}.how li{border-bottom:1px solid var(--line);padding:18px 0;display:flex;gap:22px}.how li:first-child{padding-top:0}.how li b{font-size:12px;color:var(--accent)}.how li strong{font-size:17px;display:block;margin-bottom:7px}.how li small{color:var(--muted);line-height:1.6;font-size:13px}
-.footer{border-top:1px solid var(--line);padding:31px 0 45px;display:flex;justify-content:space-between;color:#8e939e;font-size:12px;gap:14px}.footer strong{color:#f4f4f5;letter-spacing:.1em}
-.dialog-backdrop{position:fixed;inset:0;background:#000b;z-index:10;display:none;align-items:center;justify-content:center;padding:20px}.dialog-backdrop.open{display:flex}.dialog{position:relative;overflow:auto;max-height:min(90vh,730px);width:min(630px,100%);background:#17191f;border:1px solid #454953;border-radius:20px;padding:64px 32px 32px;box-shadow:0 30px 90px #000a}.dialog-close{position:absolute;right:17px;top:15px;background:#2b2e35;border:0;color:white;width:36px;height:36px;border-radius:50%;font-size:21px;z-index:2;display:grid;place-items:center;line-height:1}.dialog .code{color:var(--accent);font-size:11px;font-weight:850;letter-spacing:.17em}.dialog h2{font-size:clamp(31px,5vw,47px);margin:14px 0 15px;letter-spacing:-.06em}.dialog p{color:#bfc4cf;line-height:1.75;font-size:15px}.dialog ul{color:#d9dce3;line-height:1.9;padding-left:23px}.notice{background:#252831;border:1px solid #393e48;padding:16px;border-radius:12px;font-size:13px!important}.dialog .disabled{background:#41444b;color:#aeb2bd;border:0;border-radius:10px;padding:15px;font-weight:700;width:100%;cursor:not-allowed}
-@media(max-width:740px){.header{height:70px}.brand{font-size:20px}.header-links{gap:13px;font-size:10px}.hero{min-height:490px;padding:74px 0 55px}.hero:after{right:-270px;top:28px}.hero h1{font-size:clamp(51px,12vw,77px)}.description{font-size:14px}.cards{grid-template-columns:1fr;gap:14px}.art{height:220px}.section{padding:54px 0}.section-top{display:block}.section-top p{margin-top:15px}.how{grid-template-columns:1fr;gap:28px}.footer{flex-direction:column}.search-wrap button{padding:13px 13px}.page{width:min(1110px,calc(100% - 34px))}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}}
-</style>
-<style>
-/* OBNOTE identity: charcoal, brushed silver, geometric light. */
-body{background:radial-gradient(ellipse at 83% 0%,#17202b 0%,#090c13 32%,#06080f 76%) fixed}
-.header{border-color:#343e4a}
-.brand{letter-spacing:.13em;font-weight:760}
-.brand img{width:32px;height:32px;filter:drop-shadow(0 0 8px #c6d5e522)}
-.intro-tag{color:#c9d2dd}
-.hero:before{content:"";position:absolute;left:-220px;top:24px;width:300px;height:370px;transform:skewX(-35deg);background:linear-gradient(108deg,transparent 17%,#d9e5f514 61%,#e8f4ff76 62%,#7e96ac21 63%,transparent 78%);pointer-events:none}
-.hero:after{right:-255px;top:1px;width:480px;height:470px;transform:skewX(-35deg);border:0;border-radius:0;background:linear-gradient(105deg,transparent 29%,#b5c3d610 39%,#f4f9ff77 40%,#dce8f329 41%,#54627416 64%,transparent 70%);box-shadow:none}
-.hero h1 em{background:linear-gradient(110deg,#fcfdff 8%,#d5dfe9 55%,#8998a9 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.search-wrap{background:#151b25;border-color:#485361}
-.search-wrap:focus-within{border-color:#d5e0eb;box-shadow:0 0 0 2px #b8c8da1c}
-.search-wrap button{background:linear-gradient(135deg,#ffffff,#c5d0dd);color:#101722}
-.search-wrap button:hover{background:#fff}
-.card{background:#121721;border-color:#374150}
-.card:hover,.card:focus-visible{border-color:#d1dbe7}
-.art{background:radial-gradient(ellipse at 55% 40%,#374251 0%,#1c2430 45%,#0c1018 100%)}
-.meta,.result{color:#d8e5f1}
-.dialog{background:#121822;border-color:#495564}
-.dialog-close{background:#2c3745}
-@media(max-width:740px){.hero:before{left:-240px}.hero:after{right:-350px}}
-
-/* Catalog data lives in products.json; images and prices are optional. */
-.art img{width:100%;height:100%;object-fit:contain;padding:12px}
-.art-placeholder{width:120px;height:120px;display:grid;place-items:center;color:#e0e7ef;font-size:110px;font-weight:200;transform:rotate(-6deg);text-shadow:0 6px 30px #a9bcd334}
-.product-price{font-size:13px;color:#ebf0f7;font-weight:700;margin-top:13px}
-.dialog .product-price{font-size:18px;margin:0 0 16px;color:#f1f5f9}
-.dialog-art{border:1px solid #394553;background:#0c111b;border-radius:12px;overflow:hidden;margin:0 0 19px}
-.dialog-art .art{height:210px}
-.purchase-link{display:block;text-align:center;background:linear-gradient(115deg,#eef3f9,#bac7d5);color:#0c111a;font-weight:750;border-radius:10px;padding:15px}
-.purchase-link:hover{background:#fff}
-.purchase-link[hidden],.disabled[hidden]{display:none}
-
-
-.transparency{display:flex;align-items:center;justify-content:space-between;gap:30px}
-.transparency p{color:var(--muted);max-width:560px;line-height:1.75;font-size:14px;margin:16px 0 0}
-.transparency-link{display:inline-flex;align-items:center;justify-content:center;border:1px solid #748496;border-radius:11px;color:#edf3fa;font-weight:700;font-size:13px;padding:14px 16px;white-space:nowrap;transition:background .2s}
-.transparency-link:hover{background:#263344}
-.footer a{color:#d9e7f6;text-decoration:underline;text-underline-offset:4px}
-@media(max-width:740px){.transparency{display:block}.transparency-link{margin-top:20px}}
-
-.stock-label{margin-top:9px;color:#b7cbd9;font-size:12px;letter-spacing:.015em}
-.dialog p.stock-label{font-weight:650;color:#d5e3f1;font-size:14px;margin:0 0 3px}
-.dialog p.data-timestamp{color:#9eaebd;font-size:12px;margin:0 0 15px}
-</style>
+<link rel="stylesheet" href="./assets/site.css">
 </head>
 <body>
-<header class="header page"><a class="brand" href="#top" aria-label="OBNOTE home"><img src="./assets/obnote-mark.svg" width="32" height="32" alt="" aria-hidden="true">OBNOTE</a><nav class="header-links" aria-label="Primary navigation"><a href="#collection">COLLECTION</a><a href="#how">HOW IT WORKS</a></nav></header>
-<main id="top">
-<section class="hero page"><div class="intro-tag">CURATED TECH & DESIGN</div><h1>Discover<br><em>what's next.</em></h1><p class="description">Interesting technology. Smarter desks. Objects worth discovering. Find the products featured in our videos by their unique product code.</p><form class="search-wrap" id="searchForm" role="search"><svg width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16 16 5 5"/></svg><input id="codeInput" aria-label="Product code" autocomplete="off" inputmode="numeric" placeholder="Enter product code (e.g. 1001)" required><button type="submit">EXPLORE ↗</button></form><p class="hint">TRY A DEMO CODE: 1001 · 1002 · 1003</p><div class="result" id="result" role="status" aria-live="polite"></div></section>
-<section class="section" id="collection"><div class="page"><div class="section-top"><div><div class="eyebrow">001 / DISCOVER</div><h2>The collection<span style="color:var(--accent)">.</span></h2></div><p>Preview products · More coming soon</p></div><div class="cards" id="cards"></div></div></section>
-<section class="section" id="how"><div class="page how"><div><div class="eyebrow">002 / THE IDEA</div><h2>See it. Search it.<br>Explore it.</h2></div><ol><li><b>01</b><div><strong>Watch a Short</strong><small>Spot a curious product in an OBNOTE video.</small></div></li><li><b>02</b><div><strong>Enter the code</strong><small>Find the unique code mentioned in the video.</small></div></li><li><b>03</b><div><strong>Explore the details</strong><small>Learn about the object, all in one place.</small></div></li></ol></div></section>
-<section class="section" id="transparency"><div class="page transparency"><div><div class="eyebrow">003 / TRANSPARENCY</div><h2>Clear by design.</h2><p>These are fictional preview products. This demo site currently has no ads, affiliate links, or checkout.</p></div><a class="transparency-link" href="./privacy.html">Privacy &amp; Disclosure ↗</a></div></section>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head" id="top"><div class="wrap head-inner">
+ <a class="brand" href="#top" aria-label="OBNOTE home"><img src="./assets/obnote-mark.svg" width="30" height="30" alt="">OBNOTE</a>
+ <nav aria-label="Primary"><a href="#collection"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5h6.5V10H3.5zm10.5 0h6.5V10H14zM3.5 14H10v6.5H3.5zM14 14h6.5v6.5H14z"/></svg>Collection</a><a href="#how"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h6l3 2 3-2h6v13h-6l-3 2-3-2H3zm9 2v13"/></svg>How it works</a><a href="./privacy.html"><svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg>Privacy</a></nav>
+</div></header>
+<main id="main" class="wrap">
+ <section class="hero" aria-labelledby="intro">
+  <div class="hero-copy">
+   <p class="kicker"><i class="signal" aria-hidden="true"></i> Curated tech &amp; design</p>
+   <h1 id="intro">Discover<br><em>what’s next.</em></h1>
+   <p class="lede">Interesting technology. Smarter desks. Explore the objects featured in OBNOTE videos by product code.</p>
+   <form id="searchForm" class="search" role="search">
+    <label for="codeInput" class="sr-only">Product code</label><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+    <input id="codeInput" type="text" placeholder="Enter product code" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+    <button type="submit">Explore <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>
+   </form>
+   <div class="examples" id="examples" hidden><span>Try a code</span><div id="exampleCodes"></div></div>
+   <p class="result" id="result" role="status"></p>
+  </div>
+  <figure class="study">
+   <div class="study-stage"><div class="sighting tl"></div><div class="sighting tr"></div>
+    <img src="./assets/identity-study.webp" width="920" height="736" alt="Exploded view of the OBNOTE mark in brushed silver and graphite." fetchpriority="high">
+    <div class="sighting bl"></div><div class="sighting br"></div>
+   </div>
+   <figcaption><span>OBNOTE mark</span><span>Exploded view</span></figcaption>
+  </figure>
+ </section>
+ <section id="collection" class="section" aria-labelledby="collectionTitle">
+  <div class="section-head"><h2 id="collectionTitle">The collection<span>.</span></h2><p class="catalog-count" id="count"></p></div>
+  <div class="catalog-message" id="catalogMessage"><span id="catalogStatus" role="status">Loading the collection…</span><button type="button" id="retry" hidden>Try again <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button></div>
+  <div class="cards" id="cards"></div>
+ </section>
+ <section class="section" id="how" aria-labelledby="howTitle"><div class="section-head"><h2 id="howTitle">How it works<span>.</span></h2></div>
+ <ol class="steps">
+  <li><span aria-hidden="true">01</span><div><h3>Watch a Short</h3><p>Spot a curious product in an OBNOTE video.</p></div></li>
+  <li><span aria-hidden="true">02</span><div><h3>Enter the code</h3><p>Type the product code from the video into the search field.</p></div></li>
+  <li><span aria-hidden="true">03</span><div><h3>Explore the details</h3><p>Find the product’s features, price and availability in one place.</p></div></li>
+ </ol></section>
+ <section class="disclosure"><div class="disclosure-title"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg><h2>Clear by design.</h2></div><p>This demo features fictional preview products. There are no active ads, affiliate links or checkout.</p><a class="text-link" href="./privacy.html">Privacy &amp; Disclosure <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></section>
 </main>
-<footer class="page footer"><strong>OBNOTE®</strong><span>DISCOVER WHAT'S NEXT.</span><span>Demo site · No purchases, ads or affiliate links. <a href="./privacy.html">Privacy &amp; Disclosure</a></span></footer>
-<div class="dialog-backdrop" id="backdrop"><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" tabindex="-1"><button class="dialog-close" id="closeDialog" aria-label="Close details">×</button><div class="dialog-art" id="dialogImage"></div><div class="code" id="dialogCode"></div><h2 id="dialogTitle"></h2><p id="dialogText"></p><p class="product-price" id="dialogPrice"></p><p class="stock-label" id="dialogStock"></p><p class="data-timestamp" id="dialogPriceChecked"></p><ul id="dialogFeatures"></ul><p class="notice" id="dialogNotice">Preview products only.</p><a id="purchaseLink" class="purchase-link" target="_blank" rel="sponsored nofollow noopener noreferrer" hidden>View at seller ↗</a><button class="disabled" id="unavailable" disabled>Purchase link not available yet ↗</button></section></div>
-<script>
-const demoProducts=[
- {code:"1001",name:"Orbit Dock",category:"DESK TECH",tagline:"A cleaner desk, by design.",description:"A concept desktop dock demonstrating how a product page could introduce elegant cable organization and workspace essentials.",features:["Concept product for interface testing","Geometric desktop accessory visualization","No actual listing or price"],art:`<svg viewBox="0 0 240 180" aria-hidden="true"><ellipse cx="120" cy="132" rx="83" ry="23" fill="#07090b" opacity=".6"/><rect x="46" y="85" width="148" height="49" rx="17" fill="#6d757c"/><rect x="46" y="79" width="148" height="43" rx="17" fill="#b4bac0"/><rect x="57" y="84" width="126" height="24" rx="10" fill="#222832"/><circle cx="81" cy="96" r="6" fill="#dfe7f0"/><rect x="106" y="91" width="54" height="10" rx="5" fill="#47505a"/><path d="M175 98h27c10 0 14-6 14-16" stroke="#7f8a95" stroke-width="7" fill="none" stroke-linecap="round"/></svg>`},
- {code:"1002",name:"Halo Light",category:"WORKSPACE",tagline:"Light the way you work.",description:"A conceptual ambient desk lamp entry designed to demonstrate a futuristic lighting product presentation.",features:["Concept product for interface testing","Soft circular light form","No actual listing or price"],art:`<svg viewBox="0 0 240 180" aria-hidden="true"><ellipse cx="120" cy="152" rx="70" ry="12" fill="#07090b" opacity=".6"/><circle cx="120" cy="76" r="48" fill="none" stroke="#f1f5fa" stroke-width="14"/><circle cx="120" cy="76" r="48" fill="none" stroke="#dfe7f0" stroke-width="6"/><rect x="116" y="122" width="8" height="21" rx="4" fill="#a8b0b6"/><rect x="91" y="142" width="58" height="7" rx="3" fill="#a8b0b6"/></svg>`},
- {code:"1003",name:"Modular Grid",category:"DESK ACCESSORIES",tagline:"Find room for better ideas.",description:"A concept modular organizer entry showing how small geometric objects can make a digital product catalog feel cohesive.",features:["Concept product for interface testing","Stackable geometric arrangement","No actual listing or price"],art:`<svg viewBox="0 0 240 180" aria-hidden="true"><path d="M45 126 110 93l68 36-68 31Z" fill="#4e555e"/><path d="M110 93V58l68 34v37Z" fill="#88929c"/><path d="M45 126V89l65-31v35Z" fill="#c0c7cd"/><path d="m45 89 65-34 68 37-68 34Z" fill="#e2e7e7"/><path d="m80 73 60 32M110 58v68" stroke="#879098" stroke-width="2"/><rect x="88" y="32" width="42" height="42" rx="5" fill="#dfe7f0" transform="rotate(45 109 53)"/></svg>`}
-];
-const $=s=>document.querySelector(s);
+<footer class="site-foot"><div class="wrap foot-inner"><a class="brand" href="./index.html" aria-label="OBNOTE home"><img src="./assets/obnote-mark.svg" width="30" height="30" alt="">OBNOTE</a><span>Discover what's next.</span><a href="./privacy.html">Privacy &amp; Disclosure</a></div></footer>
+<dialog id="backdrop" aria-labelledby="dialogTitle">
+ <div class="window-bar"><span><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5h6.5V10H3.5zm10.5 0h6.5V10H14zM3.5 14H10v6.5H3.5zM14 14h6.5v6.5H14z"/></svg> Product details</span><button id="closeDialog" type="button" aria-label="Close details" autofocus><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+ <div class="window-scroll"><div id="dialogImage"></div>
+ <div class="window-body"><p class="kicker" id="dialogCode"></p><h2 id="dialogTitle"></h2><p id="dialogText"></p>
+ <div class="facts"><p class="product-price" id="dialogPrice"></p><p id="dialogStock"></p><p id="dialogPriceChecked"></p></div>
+ <ul id="dialogFeatures"></ul><p class="notice" id="dialogNotice"></p>
+ <a id="purchaseLink" class="action" target="_blank" rel="sponsored nofollow noopener noreferrer" hidden>View at seller ↗</a><button class="action" id="unavailable" disabled>Purchase link not available yet</button></div></div>
+</dialog>
+<script>const $=s=>document.querySelector(s);
 let previousFocus=null;
-let products=demoProducts;
+let products=[];
+let catalogState="loading";
+const demoArt = new Map([
+  ["1001", "./assets/orbit-dock.webp"],
+  ["1002", "./assets/halo-light.webp"],
+  ["1003", "./assets/modular-grid.webp"],
+  ["1004", "./assets/desk-stand.webp"]
+]);
 
 function secureUrl(raw){
   if(typeof raw!=="string"||!raw.trim()) return null;
@@ -143,8 +127,14 @@ function media(p){
   return box;
 }
 function showPlaceholder(box,p){
-  const demo=demoProducts.find(x=>x.code===p.code);
-  if(p.is_demo&&demo?.art){box.innerHTML=demo.art;return}
+  if(p.is_demo && demoArt.has(p.code)){
+    const image = document.createElement("img");
+    image.className = "concept-art";
+    image.src = demoArt.get(p.code);
+    image.alt = p.name + " concept illustration";
+    box.append(image);
+    return;
+  }
   const shape=document.createElement("div");
   shape.className="art-placeholder";shape.setAttribute("aria-hidden","true");
   shape.textContent="◇";
@@ -158,7 +148,10 @@ function buildCard(p){
   const card=document.createElement("button");
   card.type="button";card.className="card";card.setAttribute("aria-label","View "+p.name);
   card.addEventListener("click",()=>openProduct(p.code));
-  card.append(media(p));
+  const visual = media(p);
+  const code = addText(visual,"span","#" + p.code,"code-tag");
+  code.setAttribute("aria-hidden","true");
+  card.append(visual);
   const body=document.createElement("div");body.className="card-content";
   addText(body,"div",p.category+(p.is_demo?" · DEMO":""),"meta");
   addText(body,"h3",p.name);
@@ -166,7 +159,7 @@ function buildCard(p){
   addText(body,"div",money(p),"product-price");
   addText(body,"div",availability(p),"stock-label");
   const footer=document.createElement("div");footer.className="card-footer";
-  addText(footer,"span","CODE "+p.code);
+  addText(footer,"span","View details");
   addText(footer,"span","↗");
   body.append(footer);card.append(body);return card;
 }
@@ -174,7 +167,11 @@ function renderProducts(){
   $("#cards").replaceChildren(...products.map(buildCard));
 }
 function openProduct(code){
-  const p=products.find(item=>item.code===code);
+  if(catalogState !== "ready"){
+    $("#result").textContent = catalogState === "loading" ? "The collection is loading. Try again in a moment." : "The collection is unavailable. Use Try again below.";
+    return;
+  }
+  const p=products.find(item=>item.code===code) || products.find(item=>item.code.toUpperCase()===code.toUpperCase());
   if(!p){$("#result").textContent="No product found for code "+code+".";return}
   $("#result").textContent="";
   previousFocus=document.activeElement;
@@ -197,22 +194,31 @@ function openProduct(code){
   link.hidden=!canBuy;unavailable.hidden=canBuy;
   if(canBuy){link.href=p.purchase_url}
   else{link.removeAttribute("href")}
-  $("#backdrop").classList.add("open");document.body.style.overflow="hidden";
+  $("#backdrop").showModal();
+  $(".window-scroll").scrollTop = 0;
+  document.body.classList.add("modal-open");
   $("#closeDialog").focus();
   const u=new URL(location.href);u.searchParams.set("code",p.code);history.replaceState({},"",u);
 }
 function closeProduct(){
-  $("#backdrop").classList.remove("open");document.body.style.overflow="";
+  $("#backdrop").close();
+}
+$("#backdrop").addEventListener("close", () => {
+  document.body.classList.remove("modal-open");
   const u=new URL(location.href);u.searchParams.delete("code");history.replaceState({},"",u);
   previousFocus?.focus();
-}
+});
 $("#searchForm").addEventListener("submit",e=>{
   e.preventDefault();const code=$("#codeInput").value.trim().toUpperCase();
   if(code)openProduct(code);
 });
 $("#closeDialog").addEventListener("click",closeProduct);
-$("#backdrop").addEventListener("click",e=>{if(e.target===$("#backdrop"))closeProduct()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#backdrop").classList.contains("open"))closeProduct()});
+$("#backdrop").addEventListener("click", event => {
+  if(event.target !== $("#backdrop")) return;
+  const bounds = event.target.getBoundingClientRect();
+  if(event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeProduct();
+});
+$("#retry").addEventListener("click", loadProducts);
 // Publishable (public) key only. Supabase RLS restricts public users to SELECT published rows.
 const DB_URL="https://bidcctugofnvfilywick.supabase.co";
 const DB_PUBLIC_KEY="sb_publishable_pDN2aE-XfuHPvqvI96_QFw_MAiujlJJ";
@@ -226,6 +232,11 @@ async function catalogFromSupabase(){
   return data;
 }
 async function loadProducts(){
+  catalogState = "loading";
+  $("#retry").hidden = true;
+  $("#catalogMessage").hidden = false;
+  $("#catalogStatus").textContent = "Loading the collection…";
+  $("#result").textContent = "";
   // Supabase is authoritative. Never revive deleted or unpublished products from a stale file.
   try {
     const raw=await catalogFromSupabase();
@@ -234,14 +245,29 @@ async function loadProducts(){
       if(!p||seen.has(p.code))return false;
       seen.add(p.code);return true;
     }).sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}));
+    catalogState = "ready";
     renderProducts();
-    $("#result").textContent=products.length?"":"No products are published yet.";
+    $("#count").textContent = products.length + (products.length === 1 ? " object" : " objects");
+    $("#catalogMessage").hidden = products.length > 0;
+    $("#catalogStatus").textContent = products.length ? "" : "No products are published yet.";
+    const codes = products.slice(0, 3).map(product => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = product.code;
+      button.setAttribute("aria-label","Explore code " + product.code);
+      button.addEventListener("click", () => openProduct(product.code));
+      return button;
+    });
+    $("#exampleCodes").replaceChildren(...codes);
+    $("#examples").hidden = !codes.length;
     const code=new URL(location.href).searchParams.get("code");
     if(code)openProduct(code.toUpperCase());
   } catch(err) {
     console.warn("Could not load the live product catalog",err);
     products=[];renderProducts();
-    $("#result").textContent="Live catalog temporarily unavailable. Please try again.";
+    catalogState = "unavailable";
+    $("#catalogStatus").textContent = "The live collection is temporarily unavailable.";
+    $("#retry").hidden = false;
   }
 }
 // Avoid showing built-in demo cards before Supabase confirms published products.
