@@ -1,0 +1,9 @@
+.tmp/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+artifacts/
+*.sqlite*
+*.mp4
+*.wav
